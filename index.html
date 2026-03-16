@@ -1941,30 +1941,33 @@
     <a href="#home" class="skip-to-content">Skip to main content</a>
 
     <!-- SECTION: nav -->
-    <header class="header" role="banner">
-        <div class="container header__inner">
-            <a href="#" class="header__brand" aria-label="Home">
-                <!-- PROFILE:brand -->
-                <span class="header__name">Candice Gaugain</span>
-                <span class="header__tagline">Counselling &amp; Psychotherapy</span>
-                <!-- /PROFILE:brand -->
-            </a>
-            <nav class="header__nav" id="mainNav" role="navigation" aria-label="Main navigation">
-                <a href="#about">About</a>
-                <a href="#services">Services</a>
-                <a href="#expect">What to Expect</a>
-                <a href="#fees">Fees</a>
-                <a href="#location">Location</a>
-                <a href="#contact" class="btn btn--gold btn--small header__cta">Book Free Consultation</a>
-            </nav>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mainNav">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </header>
-    <!-- /SECTION: nav -->
+<nav class="nav nav--two-tier" role="navigation" aria-label="Main navigation">
+  <div class="container">
+    <div class="nav__top">
+      <a href="./" class="nav__brand">
+        <span class="nav__name">Site Name</span>
+      </a>
+
+    </div>
+    <div class="nav__bottom">
+      <div class="nav__links">
+      <a href="./" class="nav__link nav__link--active">Home</a>
+      <a href="contact.html" class="btn btn--primary nav__cta">Book a Session</a>
+      </div>
+      <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+        <span class="nav__toggle-bar"></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav__mobile" id="mobile-menu" role="menu">
+    <a href="./" class="nav__link nav__link--active" role="menuitem">Home</a>
+    <a href="contact.html" class="btn btn--primary" role="menuitem">Book a Session</a>
+
+  </div>
+</nav>
+<!-- /SECTION: nav -->
 
     <main>
     <!-- SECTION: hero -->
