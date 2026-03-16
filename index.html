@@ -2685,10 +2685,10 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    showFormMessage(data.message, true);
+                    showFormMessage(data.data?.message || "Thank you for your message.", true);
                     form.reset();
                 } else {
-                    showFormMessage(data.message, false);
+                    showFormMessage(data.error || data.data?.message || "Something went wrong. Please try again.", false);
                 }
             } catch (err) {
                 showFormMessage('Sorry, there was a problem sending your message. Please try calling 07946 820 704 or emailing candicegaugaincounselling@gmail.com directly.', false);
