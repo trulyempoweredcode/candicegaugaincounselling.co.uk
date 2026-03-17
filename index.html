@@ -434,8 +434,15 @@
 
         .header__brand {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            align-items: center;
+            gap: 0.75rem;
             text-decoration: none;
+        }
+
+        .header__brand-text {
+            display: flex;
+            flex-direction: column;
         }
 
         .header__name {
@@ -1969,8 +1976,10 @@
         <div class="container header__inner">
             <a href="#" class="header__brand" aria-label="Home">
                 <!-- PROFILE:logo --><img src="images/logo.png" alt="Candice Gaugain" class="nav__logo" style="max-width:80px;height:auto;"><!-- /PROFILE:logo -->
-                <span class="header__name"><!-- PROFILE:site_title -->Candice Gaugain<!-- /PROFILE:site_title --></span>
-                <span class="header__tagline"><!-- PROFILE:site_slogan -->Counselling &amp; Psychotherapy<!-- /PROFILE:site_slogan --></span>
+                <div class="header__brand-text">
+                    <span class="header__name"><!-- PROFILE:site_title -->Candice Gaugain<!-- /PROFILE:site_title --></span>
+                    <span class="header__tagline"><!-- PROFILE:site_slogan -->Counselling &amp; Psychotherapy<!-- /PROFILE:site_slogan --></span>
+                </div>
             </a>
             <nav class="header__nav" id="mainNav" role="navigation" aria-label="Main navigation">
                 <a href="#about">About</a>
