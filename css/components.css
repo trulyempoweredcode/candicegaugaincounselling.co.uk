@@ -7608,6 +7608,7 @@ a.card--service:hover .card__link {
 
 /* ========== LOCATION ========== */
 .location {
+    display: block;
     background: var(--color-surface);
 }
 
