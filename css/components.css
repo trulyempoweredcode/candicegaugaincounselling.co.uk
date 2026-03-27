@@ -8306,3 +8306,47 @@ a.card--service:hover .card__link {
         font-size: 1rem;
     }
 }
+
+/* ========== CONVERSION FIXES ========== */
+
+/* Hero H1 — restore original large sizing (was clamp 2.4rem–4rem) */
+.hero h1 {
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    letter-spacing: -0.01em;
+    font-weight: 500;
+}
+
+/* Section padding — restore original generous padding (was clamp 4rem–7rem) */
+.about,
+.services,
+.issues,
+.expect,
+.fees,
+.location,
+.contact {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+}
+
+/* Form consent checkbox */
+.form__group--consent {
+    margin-bottom: 1.25rem;
+}
+
+.form__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.form__consent input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.15rem;
+    flex-shrink: 0;
+    accent-color: var(--color-primary-dark);
+    cursor: pointer;
+}
