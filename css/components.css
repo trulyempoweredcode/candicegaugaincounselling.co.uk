@@ -40,6 +40,8 @@
   align-items: center;
   justify-content: space-between;
   height: 72px;
+  position: relative;
+  z-index: 2;
 }
 
 .nav__brand {
@@ -155,15 +157,14 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Mobile Menu Overlay — slide in from right */
+/* Mobile Menu Overlay — slide in from right, full viewport coverage */
 .nav__mobile {
   display: flex;
   position: fixed;
   inset: 0;
-  top: 72px;
   background-color: var(--color-surface);
-  z-index: 99;
-  padding: var(--space-xl) var(--space-lg);
+  z-index: 1;
+  padding: calc(72px + var(--space-xl)) var(--space-lg) var(--space-xl);
   flex-direction: column;
   gap: var(--space-lg);
   overflow-y: auto;
@@ -175,20 +176,16 @@
               visibility 0.35s;
 }
 
-/* When opened from the compact scroll header, start below it */
+/* When opened from the compact scroll header */
 .nav__mobile--from-scroll {
-  top: 56px;
+  padding-top: calc(56px + var(--space-xl));
+  z-index: 201;
 }
 
 .nav__mobile--open {
   transform: translateX(0);
   opacity: 1;
   visibility: visible;
-}
-
-/* Hide nav border when mobile menu is open to prevent visible gap */
-.nav:has(.nav__mobile--open) {
-  border-bottom-color: transparent;
 }
 
 .nav__mobile .nav__link,
