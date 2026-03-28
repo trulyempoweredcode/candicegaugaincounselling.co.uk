@@ -95,6 +95,7 @@
   transition: color var(--transition-fast);
   position: relative;
   padding: var(--space-xs) 0;
+  white-space: nowrap;
 }
 
 .nav__link::after {

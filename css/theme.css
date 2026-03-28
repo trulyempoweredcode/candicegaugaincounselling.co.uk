@@ -38,6 +38,11 @@
   --font-body: 'Nunito Sans', 'Segoe UI', Tahoma, sans-serif;
 }
 
+/* Tighter nav spacing for 6+ items */
+.nav__links {
+  gap: var(--space-lg);
+}
+
 /* Gold button — site-specific accent */
 .btn--gold {
   background-color: var(--color-secondary);
