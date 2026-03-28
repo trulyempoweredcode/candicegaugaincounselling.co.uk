@@ -185,6 +185,11 @@
   visibility: visible;
 }
 
+/* Hide nav border when mobile menu is open to prevent visible gap */
+.nav:has(.nav__mobile--open) {
+  border-bottom-color: transparent;
+}
+
 .nav__mobile .nav__link,
 .nav__mobile .btn {
   opacity: 0;

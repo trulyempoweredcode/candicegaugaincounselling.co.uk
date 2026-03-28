@@ -38,6 +38,21 @@
   --font-body: 'Nunito Sans', 'Segoe UI', Tahoma, sans-serif;
 }
 
+/* Gold button — site-specific accent */
+.btn--gold {
+  background-color: var(--color-secondary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-secondary);
+  box-shadow: 0 2px 12px rgba(184, 150, 62, 0.3);
+}
+
+.btn--gold:hover {
+  background-color: var(--color-secondary-light);
+  color: var(--color-text-inverse);
+  border-color: var(--color-secondary-light);
+  box-shadow: 0 6px 24px rgba(184, 150, 62, 0.35);
+}
+
 
 /* =============================================
    SITE-SPECIFIC COMPONENT OVERRIDES
