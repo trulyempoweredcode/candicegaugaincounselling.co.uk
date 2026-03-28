@@ -21,7 +21,6 @@
     function closeMenu() {
       toggle.classList.remove('nav__toggle--open');
       mobileMenu.classList.remove('nav__mobile--open');
-      mobileMenu.classList.remove('nav__mobile--from-scroll');
       body.style.overflow = '';
       toggle.setAttribute('aria-expanded', 'false');
       // Collapse all open sub-menus
@@ -35,7 +34,6 @@
     toggle.addEventListener('click', function () {
       var isOpen = toggle.classList.toggle('nav__toggle--open');
       mobileMenu.classList.toggle('nav__mobile--open', isOpen);
-      mobileMenu.classList.remove('nav__mobile--from-scroll');
       body.style.overflow = isOpen ? 'hidden' : '';
       toggle.setAttribute('aria-expanded', String(isOpen));
     });
@@ -90,11 +88,6 @@
       scrollToggle.addEventListener('click', function () {
         var isOpen = toggle.classList.toggle('nav__toggle--open');
         mobileMenu.classList.toggle('nav__mobile--open', isOpen);
-        if (isOpen) {
-          mobileMenu.classList.add('nav__mobile--from-scroll');
-        } else {
-          mobileMenu.classList.remove('nav__mobile--from-scroll');
-        }
         body.style.overflow = isOpen ? 'hidden' : '';
         toggle.setAttribute('aria-expanded', String(isOpen));
       });
