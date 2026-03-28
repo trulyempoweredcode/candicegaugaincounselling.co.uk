@@ -45,6 +45,23 @@
    (kept in theme.css to survive template updates)
    ============================================= */
 
+
+.hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero__bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 70% 20%, rgba(197, 212, 192, 0.5), transparent),
+        radial-gradient(ellipse 60% 50% at 20% 80%, rgba(232, 217, 173, 0.25), transparent),
+        radial-gradient(ellipse 40% 40% at 80% 70%, rgba(143, 160, 143, 0.2), transparent);
+}
+
 .hero__bg::after {
     content: '';
     position: absolute;
