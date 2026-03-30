@@ -399,6 +399,16 @@
   }
 
   /* -----------------------------------------
+     ANTI-SPAM: Timestamp field
+     Set _t to page load time (epoch ms) so the
+     server can reject instant bot submissions.
+     ----------------------------------------- */
+  var tsField = document.querySelector('input[name="_t"]');
+  if (tsField) {
+    tsField.value = Date.now().toString();
+  }
+
+  /* -----------------------------------------
      COOKIE CONSENT BANNER
      Show banner if not previously accepted.
      Store preference in localStorage.
