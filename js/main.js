@@ -42,6 +42,8 @@
 
     var mobileLinks = mobileMenu.querySelectorAll('a');
     mobileLinks.forEach(function (link) {
+      // Don't close menu when clicking dropdown parent links — they toggle submenus
+      if (link.closest('.nav__mobile-parent')) return;
       link.addEventListener('click', closeMenu);
     });
 
