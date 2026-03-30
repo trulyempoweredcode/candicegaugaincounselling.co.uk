@@ -71,6 +71,23 @@
         children.hidden = isOpen;
       });
     });
+
+    // Also toggle dropdown when clicking the parent link text
+    var parentLinks = mobileMenu.querySelectorAll('.nav__mobile-parent > .nav__link');
+    parentLinks.forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var group = link.closest('.nav__mobile-group');
+        var btn = group.querySelector('.nav__mobile-expand');
+        var children = group.querySelector('.nav__mobile-children');
+        if (btn && children) {
+          var isOpen = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!isOpen));
+          children.hidden = isOpen;
+        }
+      });
+    });
   }
 
   /* -----------------------------------------
