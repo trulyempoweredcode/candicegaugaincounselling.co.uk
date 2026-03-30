@@ -40,6 +40,8 @@
   align-items: center;
   justify-content: space-between;
   height: 72px;
+  position: relative;
+  z-index: 2;
 }
 
 .nav__brand {
@@ -95,6 +97,7 @@
   transition: color var(--transition-fast);
   position: relative;
   padding: var(--space-xs) 0;
+  white-space: nowrap;
 }
 
 .nav__link::after {
@@ -142,6 +145,10 @@
   transform-origin: center;
 }
 
+.nav__toggle--open .nav__toggle-bar {
+  background-color: var(--color-text-heading) !important;
+}
+
 .nav__toggle--open .nav__toggle-bar:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -154,15 +161,14 @@
   transform: translateY(-7px) rotate(-45deg);
 }
 
-/* Mobile Menu Overlay — slide in from right */
+/* Mobile Menu Overlay — slide in from right, full viewport coverage */
 .nav__mobile {
   display: flex;
   position: fixed;
   inset: 0;
-  top: 72px;
   background-color: var(--color-surface);
-  z-index: 99;
-  padding: var(--space-xl) var(--space-lg);
+  z-index: 1;
+  padding: calc(72px + var(--space-xl)) var(--space-lg) var(--space-xl);
   flex-direction: column;
   gap: var(--space-lg);
   overflow-y: auto;
@@ -174,9 +180,10 @@
               visibility 0.35s;
 }
 
-/* When opened from the compact scroll header, start below it */
+/* When opened from the compact scroll header */
 .nav__mobile--from-scroll {
-  top: 56px;
+  padding-top: calc(56px + var(--space-sm));
+  z-index: 201;
 }
 
 .nav__mobile--open {
@@ -219,6 +226,33 @@
 .nav__mobile .btn {
   margin-top: var(--space-md);
   text-align: center;
+}
+
+/* Two CTA buttons side by side in mobile menu */
+.nav__mobile-ctas {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.nav__mobile-ctas .btn {
+  flex: 1;
+  text-align: center;
+  margin-top: 0;
+  padding: var(--space-sm);
+}
+
+/* WhatsApp button */
+.btn--whatsapp {
+  background-color: #2d7d52;
+  border-color: #2d7d52;
+  color: #ffffff;
+}
+
+.btn--whatsapp:hover {
+  background-color: #246642;
+  border-color: #246642;
+  color: #ffffff;
 }
 
 @media (min-width: 1100px) {
@@ -469,7 +503,7 @@
 }
 
 .nav--two-tier .nav__link {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* Mobile: hamburger in top bar, not bottom */
@@ -520,9 +554,10 @@
   }
 }
 
-/* Mobile menu for two-tier uses the same nav__mobile styles */
+/* Mobile menu for two-tier: needs more padding-top than single-tier nav */
 .nav--two-tier .nav__mobile {
   top: 0;
+  padding-top: 90px;
 }
 
 /* Contact info inside mobile menu */
@@ -538,6 +573,12 @@
 .nav__mobile-contact .nav__contact-item {
   display: flex;
   font-size: var(--text-base);
+}
+
+/* Force readable dark colour on white overlay — overrides nav__contact-item a light colour */
+.nav__mobile .nav__mobile-contact a,
+.nav__mobile .nav__mobile-contact .nav__contact-item {
+  color: var(--color-text);
 }
 
 @media (min-width: 900px) {
@@ -644,6 +685,18 @@
   height: 20px;
 }
 
+/* WhatsApp icon in compact scroll header — mobile only */
+.nav-scroll__wa-icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-primary);
+}
+
+.nav-scroll__wa-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
 @media (min-width: 600px) {
   .nav-scroll__phone {
     display: flex;
@@ -670,6 +723,21 @@
   height: 2px;
   background-color: var(--color-text);
   border-radius: 2px;
+  transition: all var(--transition-base);
+  transform-origin: center;
+}
+
+/* Transform nav-scroll hamburger into X when from-scroll overlay is open */
+body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 /* =============================================
@@ -740,6 +808,8 @@
   padding: var(--space-xs) var(--space-md);
   border-radius: var(--radius-full);
   border: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
 }
 
 .hero__ticks svg {
@@ -1043,6 +1113,9 @@
   order: 1;
   width: 100%;
   min-height: 300px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .hero--half .hero__image-placeholder,
@@ -1086,7 +1159,7 @@
 
 @media (min-width: 1024px) {
   .hero--half .hero__content {
-    padding: var(--space-4xl) var(--space-4xl) var(--space-4xl) var(--space-3xl);
+    padding: var(--space-4xl);
   }
 }
 
@@ -1269,7 +1342,7 @@
 
 @media (min-width: 1024px) {
   .hero--half.hero--reverse .hero__content {
-    padding: var(--space-4xl) var(--space-3xl) var(--space-4xl) var(--space-4xl);
+    padding: var(--space-4xl);
   }
 }
 
@@ -1570,7 +1643,7 @@ body:has(.nav--transparent) .hero--image {
 
 .hero--showcase .hero__content {
   order: 1;
-  max-width: 540px;
+  max-width: 600px;
   padding: 40px;
   border-radius: 20px;
   backdrop-filter: blur(6px);
@@ -1583,7 +1656,7 @@ body:has(.nav--transparent) .hero--image {
 }
 
 .hero--showcase .hero__ticks {
-  flex-wrap: nowrap;
+  margin-bottom: 0;
 }
 
 /* --- Dark card (default) --- */
@@ -1606,15 +1679,10 @@ body:has(.nav--transparent) .hero--image {
 
 .hero--showcase-dark .hero__ticks li {
   color: rgba(255, 255, 255, 0.9);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Left/right cards: strip pill bg/border to keep card compact */
-.hero--showcase-dark:not(.hero--showcase-center) .hero__ticks li {
   background: none;
   border: none;
-  padding: 0;
+  padding: var(--space-xs) 0;
+  border-radius: 0;
 }
 
 .hero--showcase-dark .hero__ticks svg {
@@ -1662,15 +1730,10 @@ body:has(.nav--transparent) .hero--image {
 
 .hero--showcase-light .hero__ticks li {
   color: var(--color-text);
-  background-color: rgba(0, 0, 0, 0.06);
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-/* Left/right cards: strip pill bg/border to keep card compact */
-.hero--showcase-light:not(.hero--showcase-center) .hero__ticks li {
   background: none;
   border: none;
-  padding: 0;
+  padding: var(--space-xs) 0;
+  border-radius: 0;
 }
 
 .hero--showcase-light .hero__ticks svg {
@@ -1761,6 +1824,12 @@ body:has(.nav--transparent) .hero--showcase {
   .hero--showcase .hero__content {
     max-width: 100%;
     padding: 28px;
+  }
+
+  /* Card is full-width on mobile — buttons and ticks can wrap */
+  .hero--showcase .hero__actions,
+  .hero--showcase .hero__ticks {
+    flex-wrap: wrap;
   }
 
   /* Reset alignment on mobile — always left-aligned full-width */
@@ -1864,6 +1933,20 @@ body:has(.nav--transparent) .hero--showcase {
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Mobile menu resets — overlay has a white background, so restore dark text */
+.nav--transparent-dark .nav__mobile .nav__link {
+  color: var(--color-text);
+}
+
+.nav--transparent-dark .nav__mobile .nav__link:hover,
+.nav--transparent-dark .nav__mobile .nav__link--active {
+  color: var(--color-primary);
+}
+
+.nav--transparent-dark .nav__mobile .nav__toggle-bar {
+  background-color: var(--color-text);
+}
+
 /* Two-tier dark */
 .nav--two-tier.nav--transparent-dark {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -1954,6 +2037,114 @@ body:has(.nav--transparent) .hero--showcase {
   color: var(--color-primary);
 }
 
+/* =============================================
+   BRANDED NAV
+   Solid primary-colour background with white text.
+   Add .nav--branded to the <nav> element.
+   Works with both default and two-tier layouts.
+   ============================================= */
+.nav--branded {
+  background-color: var(--color-primary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Brand name: white */
+.nav--branded .nav__name {
+  color: var(--color-text-inverse);
+}
+
+/* Strapline: secondary accent */
+.nav--branded .nav__title {
+  color: var(--color-secondary-light);
+}
+
+/* Nav links: white default */
+.nav--branded .nav__link {
+  color: var(--color-text-inverse);
+}
+
+/* Hover: secondary accent, active: stay white (underline provides the accent) */
+.nav--branded .nav__link:hover {
+  color: var(--color-secondary-light);
+}
+
+.nav--branded .nav__link--active {
+  color: var(--color-text-inverse);
+}
+
+/* Active underline: secondary accent */
+.nav--branded .nav__link--active::after {
+  background-color: var(--color-secondary-light);
+}
+
+/* CTA button: secondary colour to stand out against primary bg */
+.nav--branded .btn--primary,
+.nav--branded .nav__cta {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-text-inverse);
+}
+
+.nav--branded .btn--primary:hover,
+.nav--branded .nav__cta:hover {
+  background-color: var(--color-secondary-dark);
+  border-color: var(--color-secondary-dark);
+}
+
+/* Hamburger: white bars */
+.nav--branded .nav__toggle-bar {
+  background-color: var(--color-text-inverse);
+}
+
+/* Dropdown menu: reset to white bg with dark text */
+.nav--branded .nav__dropdown-menu {
+  background-color: var(--color-surface);
+}
+
+.nav--branded .nav__dropdown-menu .nav__link,
+.nav--branded .nav__dropdown-menu .nav__dropdown-link {
+  color: var(--color-text);
+}
+
+.nav--branded .nav__dropdown-menu .nav__link:hover,
+.nav--branded .nav__dropdown-menu .nav__dropdown-link:hover {
+  color: var(--color-primary);
+}
+
+/* Mobile menu: white bg, restore dark text */
+.nav--branded .nav__mobile .nav__link {
+  color: var(--color-text);
+}
+
+.nav--branded .nav__mobile .nav__link:hover,
+.nav--branded .nav__mobile .nav__link--active {
+  color: var(--color-primary);
+}
+
+.nav--branded .nav__mobile .btn--primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* --- Two-tier branded: uniform colour, subtle divider --- */
+.nav--two-tier.nav--branded .nav__top {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav--two-tier.nav--branded .nav__bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav--two-tier.nav--branded .nav__contact-item a,
+.nav--two-tier.nav--branded .nav__contact-item {
+  color: var(--color-text-inverse);
+}
+
+/* Contact icons: secondary accent */
+.nav--two-tier.nav--branded .nav__contact-item svg {
+  color: var(--color-secondary-light);
+}
+
 /* Stat bar — hidden by default */
 .hero__stats {
   display: none;
@@ -1967,6 +2158,15 @@ body:has(.nav--transparent) .hero--showcase {
   grid-template-columns: 1fr;
   gap: var(--space-2xl);
   align-items: center;
+}
+
+.intro__image-wrap {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 400px;
 }
 
 .intro__image {
@@ -2075,8 +2275,16 @@ body:has(.nav--transparent) .hero--showcase {
   height: 24px;
 }
 
+.card__date {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  margin-bottom: var(--space-xs);
+}
+
 .card__title {
-  font-size: calc(var(--text-h3-desktop) * 0.8);
+  font-size: var(--text-h3-desktop);
+  margin-top: var(--space-xs);
   margin-bottom: var(--space-sm);
 }
 
@@ -2280,7 +2488,7 @@ a.card--service:hover .card__link {
 .form__select {
   width: 100%;
   padding: var(--space-md);
-  border: 1px solid var(--color-border);
+  border: 2px solid #ced1d5;
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
   font-size: var(--text-base);
@@ -2460,12 +2668,19 @@ a.card--service:hover .card__link {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-2xl);
-  align-items: center;
+  align-items: stretch;
 }
 
 .about-hero h1,
 .about-hero h2 {
   margin-bottom: var(--space-lg);
+}
+
+.about-hero__image-wrap {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 400px;
 }
 
 .about-hero__image {
@@ -2519,7 +2734,72 @@ a.card--service:hover .card__link {
   }
 
   .about-hero__inner > div:last-child {
-    padding: var(--space-2xl) var(--space-4xl) var(--space-2xl) var(--space-4xl);
+    padding: var(--space-4xl);
+  }
+}
+
+/* =============================================
+   ABOUT: SPLIT THIRD
+   1fr image (left) + 2fr text (right).
+   Narrower image column than about-hero.
+   Uses background-image for full-bleed coverage.
+   ============================================= */
+.about-split-third {
+  padding: 0;
+}
+
+.about-split-third__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2xl);
+  align-items: stretch;
+}
+
+.about-split-third h1,
+.about-split-third h2 {
+  margin-bottom: var(--space-lg);
+}
+
+.about-split-third__image-wrap {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 350px;
+}
+
+.about-split-third__text {
+  padding: var(--space-2xl) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-split-third__text p {
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+}
+
+.about-split-third__text p + p {
+  margin-top: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .about-split-third {
+    overflow: hidden;
+  }
+
+  .about-split-third__inner {
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+  }
+
+  .about-split-third__image-wrap {
+    overflow: hidden;
+    min-height: 500px;
+  }
+
+  .about-split-third__text {
+    padding: var(--space-4xl);
   }
 }
 
@@ -2551,16 +2831,16 @@ a.card--service:hover .card__link {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
+  background-color: transparent;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .quals-list__icon svg {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
 }
 
 .quals-list__text {
@@ -2633,8 +2913,8 @@ a.card--service:hover .card__link {
    ============================================= */
 /* Service section wrapper — use around each service block */
 .service-section {
-  padding: var(--space-xl) 0;
-  border-bottom: 1px solid var(--color-border-light);
+  padding: 96px 0;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .service-section:last-of-type {
@@ -2772,8 +3052,8 @@ a.card--service:hover .card__link {
     position: sticky;
     top: 100px;
     align-self: start;
-    margin-top: var(--space-2xl);
-    padding: var(--space-xl);
+    margin-top: 96px;
+    padding: var(--space-md);
     background: var(--color-surface);
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border-light);
@@ -2794,6 +3074,7 @@ a.card--service:hover .card__link {
 .services-sidebar__nav {
   display: flex;
   flex-direction: column;
+  gap: var(--space-lg);
   margin-bottom: var(--space-xl);
 }
 
@@ -2918,14 +3199,14 @@ a.card--service:hover .card__link {
 
 .faq-item__question {
   font-family: var(--font-heading);
-  font-size: var(--text-lg);
+  font-size: calc(var(--text-h3-desktop) * 0.8);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-heading);
   margin-bottom: var(--space-sm);
 }
 
 .faq-item__answer {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
 }
@@ -2995,7 +3276,7 @@ a.card--service:hover .card__link {
    PAGE HEADER (inner pages)
    ============================================= */
 .page-header {
-  padding: var(--space-2xl) 0;
+  padding: 96px 0;
   background-color: var(--color-bg-alt);
   text-align: center;
 }
@@ -3029,6 +3310,10 @@ a.card--service:hover .card__link {
 
 .page-header--dark p {
   color: rgba(255, 255, 255, 0.85);
+}
+
+.page-header--dark .section-label {
+  color: var(--color-secondary-light);
 }
 
 .page-header--dark .breadcrumb__link {
@@ -3306,7 +3591,6 @@ a.card--service:hover .card__link {
 .split--bleed {
   display: grid;
   grid-template-columns: 1fr;
-  align-items: center;
 }
 
 .split--bleed .split__image {
@@ -3324,10 +3608,22 @@ a.card--service:hover .card__link {
   margin-bottom: var(--space-lg);
 }
 
+/* Gap between consecutive containers within a section (e.g. intro para then content grid) */
+.section .container + .container {
+  margin-top: var(--space-2xl);
+}
+
+/* Remove section padding and margin so split--bleed truly reaches the edges */
+.section:has(.split--bleed) {
+  padding: 0;
+  margin: 0;
+}
+
 @media (min-width: 768px) {
   .split--bleed {
     grid-template-columns: 1fr 1fr;
     gap: 0;
+    align-items: stretch;
   }
 
   .split--bleed .split__image {
@@ -3336,7 +3632,7 @@ a.card--service:hover .card__link {
   }
 
   .split--bleed .split__content {
-    padding: var(--space-2xl) var(--space-4xl);
+    padding: var(--space-4xl);
   }
 
   /* Reverse: image on right */
@@ -3381,6 +3677,53 @@ a.card--service:hover .card__link {
 }
 
 /* =============================================
+   CONTENT: STORY SPLIT
+   Centered heading above, then h3 lead on the left
+   with body paragraphs on the right.
+   ============================================= */
+.story-split {
+  max-width: var(--container-wide);
+  margin: 0 auto;
+}
+
+.story-split .text-center {
+  margin-bottom: var(--space-2xl);
+}
+
+.story-split__body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.story-split__lead {
+  line-height: var(--line-height-tight);
+  color: var(--color-text-heading);
+}
+
+.story-split__lead h3 {
+  font-weight: 400;
+  line-height: 1.3em;
+}
+
+.story-split__content p {
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+}
+
+.story-split__content p + p {
+  margin-top: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .story-split__body {
+    grid-template-columns: 1fr 1.5fr;
+    gap: var(--space-2xl);
+  }
+}
+
+/* =============================================
    CONTENT: TWO-COLUMN TEXT
    Heading spans full width, text splits into 2 cols.
    ============================================= */
@@ -3407,13 +3750,65 @@ a.card--service:hover .card__link {
 }
 
 /* =============================================
-   CONTENT: HIGHLIGHT BOX
-   Colored left panel + white right panel.
-   Used for standout callouts / key messages.
+   CONTENT: STORY TEXT
+   Centred header spanning full width, then a
+   two-column layout: large pull-quote (left)
+   and regular body text (right).
    ============================================= */
-.highlight-box {
+.story-text {
+  max-width: var(--container-wide);
+  margin: 0 auto;
+}
+
+.story-text__header {
+  text-align: center;
+  margin-bottom: var(--space-2xl);
+}
+
+.story-text__body {
   display: grid;
   grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.story-text__quote {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 400;
+  line-height: 1.4;
+  font-style: italic;
+  color: var(--color-text-heading);
+}
+
+.story-text__content p {
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+}
+
+.story-text__content p + p {
+  margin-top: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .story-text__header {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .story-text__body {
+    grid-template-columns: 1fr 1.5fr;
+    gap: var(--space-3xl);
+  }
+}
+
+/* =============================================
+   CONTENT: HIGHLIGHT BOX
+   Stacked card: dark header on top (full width, centred),
+   white body below (centred). Used for standout callouts.
+   ============================================= */
+.highlight-box {
+  display: flex;
+  flex-direction: column;
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -3422,28 +3817,31 @@ a.card--service:hover .card__link {
 .highlight-box__heading {
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
-  padding: var(--space-xl);
-  display: flex;
-  align-items: center;
+  padding: var(--space-lg) var(--space-xl);
+  text-align: center;
 }
 
 .highlight-box__heading h3 {
   color: var(--color-text-inverse);
   font-size: var(--text-h3-desktop);
   line-height: var(--line-height-tight);
+  margin: 0;
 }
 
 .highlight-box__content {
   background-color: var(--color-surface);
-  padding: var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
+  text-align: center;
   border: 1px solid var(--color-border-light);
   border-top: none;
+  flex: 1;
 }
 
 .highlight-box__content p {
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
   font-size: var(--text-sm);
+  margin: 0;
 }
 
 /* Secondary colour variant */
@@ -3460,21 +3858,15 @@ a.card--service:hover .card__link {
 .highlight-box--soft .highlight-box__heading {
   background-color: var(--color-bg-alt);
   color: var(--color-text-heading);
+  text-align: left;
 }
 
 .highlight-box--soft .highlight-box__heading h3 {
   color: var(--color-text-heading);
 }
 
-@media (min-width: 768px) {
-  .highlight-box {
-    grid-template-columns: 1fr 2fr;
-  }
-
-  .highlight-box__content {
-    border-top: 1px solid var(--color-border-light);
-    border-left: none;
-  }
+.highlight-box--soft .highlight-box__content {
+  text-align: left;
 }
 
 /* =============================================
@@ -3641,6 +4033,7 @@ a.card--service:hover .card__link {
 .icon-box--left {
   text-align: left;
   display: flex;
+  align-items: center;
   gap: var(--space-lg);
 }
 
@@ -4658,7 +5051,7 @@ a.card--service:hover .card__link {
 }
 
 .comparison__card h3 {
-  font-size: var(--text-md);
+  font-size: var(--text-xl);
   margin-bottom: var(--space-lg);
 }
 
@@ -4968,7 +5361,7 @@ a.card--service:hover .card__link {
   padding: var(--space-lg) 0;
   text-align: left;
   font-family: var(--font-heading);
-  font-size: calc(var(--text-h3-desktop) * 0.85);
+  font-size: calc(var(--text-h3-desktop) * 0.8);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-heading);
   cursor: pointer;
@@ -4986,11 +5379,15 @@ a.card--service:hover .card__link {
   width: 24px;
   height: 24px;
   color: var(--color-primary);
-  transition: transform var(--transition-base);
 }
 
-.accordion__item--open .accordion__icon {
-  transform: rotate(45deg);
+.accordion__icon-vertical {
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.accordion__item--open .accordion__icon-vertical {
+  transform: scaleY(0);
+  opacity: 0;
 }
 
 .accordion__content {
@@ -5003,7 +5400,7 @@ a.card--service:hover .card__link {
 }
 
 .accordion__content p {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
 }
@@ -5128,12 +5525,13 @@ a.card--service:hover .card__link {
    ============================================= */
 .comparison-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-light);
+  border: 2px solid #ccc;
 }
 
 .comparison-table thead th {
@@ -5144,7 +5542,12 @@ a.card--service:hover .card__link {
   font-weight: var(--font-weight-bold);
   color: var(--color-text-heading);
   text-align: center;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid var(--color-border-light);
+}
+
+.comparison-table thead th:last-child {
+  border-right: none;
 }
 
 .comparison-table thead th:first-child {
@@ -5156,7 +5559,12 @@ a.card--service:hover .card__link {
   font-size: var(--text-sm);
   color: var(--color-text);
   border-bottom: 1px solid var(--color-border-light);
+  border-right: 1px solid var(--color-border-light);
   text-align: center;
+}
+
+.comparison-table tbody td:last-child {
+  border-right: none;
 }
 
 .comparison-table tbody td:first-child {
@@ -5649,6 +6057,64 @@ a.card--service:hover .card__link {
   background: rgba(255, 255, 255, 0.25);
 }
 
+/* =============================================
+   VIDEO EMBED
+   Responsive 16:9 wrapper for iframe videos.
+   ============================================= */
+.video-embed {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.video-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: var(--radius-lg);
+}
+
+/* =============================================
+   VIDEO SPLIT
+   Optional centered header across both columns,
+   then text left + video right. Stacks on mobile.
+   ============================================= */
+.video-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2xl);
+  align-items: center;
+}
+
+.video-split__header {
+  text-align: center;
+}
+
+.video-split__header h2 {
+  margin-bottom: var(--space-sm);
+}
+
+.video-split__content p {
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+}
+
+@media (min-width: 768px) {
+  .video-split {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .video-split__header {
+    grid-column: 1 / -1;
+  }
+}
+
 /* --- Back to Top --- */
 .back-to-top {
   position: fixed;
@@ -5919,6 +6385,7 @@ a.card--service:hover .card__link {
   font-size: var(--text-sm);
   line-height: var(--line-height-relaxed);
   color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 0;
 }
 
 .cookie-banner__text a {
@@ -5942,6 +6409,31 @@ a.card--service:hover .card__link {
 
 .cookie-banner__accept:hover {
   background: var(--color-primary-dark);
+}
+
+.cookie-banner__decline {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  padding: var(--space-sm) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  white-space: nowrap;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.cookie-banner__decline:hover {
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+.cookie-banner__buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: var(--space-md);
+  align-items: center;
 }
 
 @media (min-width: 768px) {
@@ -6221,6 +6713,26 @@ a.card--service:hover .card__link {
 .blog-card__link svg {
   width: 16px;
   height: 16px;
+}
+
+/* =============================================
+   LEGAL CONTENT
+   Privacy, cookies, terms — long-form prose pages
+   ============================================= */
+.legal-content h2 {
+  margin-top: var(--space-3xl);
+  margin-bottom: var(--space-md);
+}
+
+.legal-content h3 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-sm);
+}
+
+.legal-content p,
+.legal-content ul,
+.legal-content ol {
+  margin-bottom: var(--space-md);
 }
 
 /* =============================================
