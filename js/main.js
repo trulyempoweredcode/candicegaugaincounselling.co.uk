@@ -21,6 +21,7 @@
     function closeMenu() {
       toggle.classList.remove('nav__toggle--open');
       mobileMenu.classList.remove('nav__mobile--open');
+      mobileMenu.classList.remove('nav__mobile--from-scroll');
       body.style.overflow = '';
       toggle.setAttribute('aria-expanded', 'false');
       // Collapse all open sub-menus
@@ -34,6 +35,7 @@
     toggle.addEventListener('click', function () {
       var isOpen = toggle.classList.toggle('nav__toggle--open');
       mobileMenu.classList.toggle('nav__mobile--open', isOpen);
+      mobileMenu.classList.remove('nav__mobile--from-scroll');
       body.style.overflow = isOpen ? 'hidden' : '';
       toggle.setAttribute('aria-expanded', String(isOpen));
     });
@@ -88,6 +90,11 @@
       scrollToggle.addEventListener('click', function () {
         var isOpen = toggle.classList.toggle('nav__toggle--open');
         mobileMenu.classList.toggle('nav__mobile--open', isOpen);
+        if (isOpen) {
+          mobileMenu.classList.add('nav__mobile--from-scroll');
+        } else {
+          mobileMenu.classList.remove('nav__mobile--from-scroll');
+        }
         body.style.overflow = isOpen ? 'hidden' : '';
         toggle.setAttribute('aria-expanded', String(isOpen));
       });
@@ -221,7 +228,7 @@
             '<div class="form__success">' +
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' +
             '<h3>Message Sent</h3>' +
-            '<p>Thank you for getting in touch. I\'ll reply within 24 hours.</p>' +
+            '<p>Thank you for getting in touch. We\'ll get back to you soon.</p>' +
             '</div>';
         })
         .catch(function () {
@@ -253,8 +260,8 @@
         }
       });
     }, {
-      threshold: 0.15,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.05,
+      rootMargin: '0px 0px 80px 0px'
     });
 
     revealEls.forEach(function (el) {
@@ -379,15 +386,23 @@
      ----------------------------------------- */
   var cookieBanner = document.querySelector('.cookie-banner');
   if (cookieBanner) {
-    var accepted = localStorage.getItem('cookie_consent');
-    if (!accepted) {
+    var consent = localStorage.getItem('cookie_consent');
+    if (!consent) {
       cookieBanner.classList.add('cookie-banner--visible');
     }
 
     var acceptBtn = cookieBanner.querySelector('.cookie-banner__accept');
     if (acceptBtn) {
       acceptBtn.addEventListener('click', function () {
-        localStorage.setItem('cookie_consent', '1');
+        localStorage.setItem('cookie_consent', 'accepted');
+        cookieBanner.classList.remove('cookie-banner--visible');
+      });
+    }
+
+    var declineBtn = cookieBanner.querySelector('.cookie-banner__decline');
+    if (declineBtn) {
+      declineBtn.addEventListener('click', function () {
+        localStorage.setItem('cookie_consent', 'declined');
         cookieBanner.classList.remove('cookie-banner--visible');
       });
     }
