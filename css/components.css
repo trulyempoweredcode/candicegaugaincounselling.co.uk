@@ -124,6 +124,7 @@
 .nav__cta {
   font-size: var(--text-sm);
   padding: var(--space-sm) var(--space-lg);
+  font-weight: 600;
 }
 
 /* Mobile Menu Toggle */
@@ -1538,7 +1539,7 @@ body:has(.nav--transparent) .hero--image {
 @media (min-width: 768px) {
   .hero--image {
     padding: var(--space-4xl) 0;
-    min-height: 650px;
+    min-height: 85vh;
   }
 
   body:has(.nav--transparent) .hero--image {
@@ -1941,6 +1942,16 @@ body:has(.nav--transparent) .hero--showcase {
 .nav--transparent-dark .nav__mobile .nav__link:hover,
 .nav--transparent-dark .nav__mobile .nav__link--active {
   color: var(--color-primary);
+}
+
+.nav--transparent-dark .nav__mobile .nav__mobile-expand {
+  color: var(--color-text);
+}
+
+.nav--transparent-dark .nav__mobile .nav__mobile-contact a,
+.nav--transparent-dark .nav__mobile .nav__mobile-contact svg,
+.nav--transparent-dark .nav__mobile .nav__mobile-contact .nav__contact-item {
+  color: var(--color-text);
 }
 
 .nav--transparent-dark .nav__mobile .nav__toggle-bar {
@@ -2346,15 +2357,28 @@ a.card--service:hover .card__link {
 
 /* Feature Card Variant */
 .card--feature {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: var(--space-lg) 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  padding: var(--space-xl);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .card--feature:hover {
-  box-shadow: none;
-  transform: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.card--feature .card__icon {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* On alt sections, swap surface → surface-alt so card still pops */
+.section--alt .card--feature {
+  background-color: var(--color-surface);
 }
 
 /* =============================================
@@ -3058,6 +3082,19 @@ a.card--service:hover .card__link {
     border-radius: var(--radius-lg);
     border: 1px solid var(--color-border-light);
     box-shadow: var(--shadow-sm);
+    /* Cap height so long link lists can scroll within the sidebar
+       instead of disappearing below the viewport when sticky */
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+
+  .services-sidebar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .services-sidebar::-webkit-scrollbar-thumb {
+    background-color: var(--color-border);
+    border-radius: 3px;
   }
 }
 
@@ -3358,6 +3395,21 @@ a.card--service:hover .card__link {
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Secondary meta line under subtitle (e.g. credentials strip on issue pages) */
+.page-header__meta {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+}
+
+.page-header--image .page-header__meta {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.page-header--dark .page-header__meta {
+  color: rgba(255, 255, 255, 0.75);
+}
+
 .page-header--image .breadcrumb__link {
   color: rgba(255, 255, 255, 0.7);
 }
@@ -3591,11 +3643,15 @@ a.card--service:hover .card__link {
 .split--bleed {
   display: grid;
   grid-template-columns: 1fr;
+  align-items: center;
 }
 
 .split--bleed .split__image {
   width: 100%;
   aspect-ratio: 4 / 3;
+  height: auto;
+  max-height: 80vh;
+  align-self: center;
   object-fit: cover;
   border-radius: 0;
 }
@@ -3623,12 +3679,15 @@ a.card--service:hover .card__link {
   .split--bleed {
     grid-template-columns: 1fr 1fr;
     gap: 0;
-    align-items: stretch;
+    align-items: center;
   }
 
   .split--bleed .split__image {
-    height: 100%;
-    aspect-ratio: auto;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    max-height: 80vh;
+    object-fit: cover;
   }
 
   .split--bleed .split__content {
@@ -3821,7 +3880,9 @@ a.card--service:hover .card__link {
   text-align: center;
 }
 
-.highlight-box__heading h3 {
+.highlight-box__heading h2,
+.highlight-box__heading h3,
+.highlight-box__heading h4 {
   color: var(--color-text-inverse);
   font-size: var(--text-h3-desktop);
   line-height: var(--line-height-tight);
@@ -3861,7 +3922,9 @@ a.card--service:hover .card__link {
   text-align: left;
 }
 
-.highlight-box--soft .highlight-box__heading h3 {
+.highlight-box--soft .highlight-box__heading h2,
+.highlight-box--soft .highlight-box__heading h3,
+.highlight-box--soft .highlight-box__heading h4 {
   color: var(--color-text-heading);
 }
 
@@ -3935,6 +3998,25 @@ a.card--service:hover .card__link {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
+}
+
+/* Checklist items that use inline SVG instead of ::before — constrain SVG size */
+.checklist > li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  line-height: var(--line-height-normal);
+}
+
+.checklist > li > svg {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  flex-shrink: 0;
+  color: var(--color-primary);
+  margin-top: 4px;
 }
 
 .checklist__item {
@@ -5220,12 +5302,53 @@ a.card--service:hover .card__link {
   flex-shrink: 0;
 }
 
-/* Dark variant (full-width band) */
+/* Dark variant — plum gradient bg with white text */
 .cta-inline--dark {
   background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
   color: var(--color-text-inverse);
-  border-radius: 0;
   padding: var(--space-2xl) var(--space-xl);
+}
+
+/* Full-width mid-page CTA: applied to a <section>.
+   Whole section is plum gradient, text left-aligned, button right-aligned. */
+.section.cta-mid-banner {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  color: var(--color-text-inverse);
+  padding: var(--space-2xl) 0;
+}
+
+.section.cta-mid-banner h2,
+.section.cta-mid-banner h3,
+.section.cta-mid-banner h4 {
+  color: var(--color-text-inverse);
+  margin-bottom: var(--space-xs);
+}
+
+.section.cta-mid-banner p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  line-height: var(--line-height-relaxed);
+}
+
+.cta-mid-banner__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2xl);
+  text-align: left;
+}
+
+.cta-mid-banner__inner > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 767px) {
+  .cta-mid-banner__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
 }
 
 .cta-inline--dark h2,
@@ -5234,7 +5357,25 @@ a.card--service:hover .card__link {
 }
 
 .cta-inline--dark p {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--text-base);
+}
+
+/* In dark CTA, secondary button inverts to outlined white-on-transparent */
+.cta-inline--dark .btn--secondary {
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+}
+
+.cta-inline--dark .btn--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Full-width band sub-variant — removes rounded corners when used as a section */
+.cta-inline--dark.cta-inline--band {
+  border-radius: 0;
 }
 
 @media (min-width: 768px) {
@@ -7209,5 +7350,82 @@ a.card--service:hover .card__link {
   .gallery-lightbox__next {
     font-size: 1.5rem;
     padding: 0.4rem 0.8rem;
+  }
+}
+
+/* =============================================
+   GOLDEN RULE: SECTION BACKGROUND ALTERNATION (safety net)
+   Only fires in the explicit "two same in a row" case. Does NOT
+   try to infer alternation from neighbouring classes — cascading
+   overrides cause new bugs. Author discipline (alternating
+   .section / .section--alt in HTML) is still the primary fix.
+
+   Covered:
+   - Two plain .section in a row → second forced to --alt look
+   - Two .section--alt in a row → second forced to plain look
+   - Two .section--dark in a row → would be unusual, not handled
+   ============================================= */
+
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner)
+  + .section:not(.section--alt):not(.section--dark):not(.cta-banner) {
+  background-color: var(--color-bg-alt);
+}
+
+main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
+  background-color: var(--color-bg);
+}
+
+/* =============================================
+   HERO--HALF SAFETY: height clamp
+   Prevents the recurring bug where content column makes the hero
+   taller than the viewport, pushing the image below the fold and
+   hiding the next section entirely.
+   ============================================= */
+@media (min-width: 768px) {
+  .hero--half .hero__inner {
+    min-height: 560px;
+    max-height: 85vh;
+  }
+  .hero--half .hero__image-wrap {
+    max-height: 85vh;
+  }
+  .hero--half .hero__image {
+    max-height: 85vh;
+    object-fit: cover;
+  }
+  .hero--half .hero__content {
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero--half .hero__image-wrap {
+    aspect-ratio: 4 / 3;
+    max-height: 55vh;
+    min-height: 0;
+  }
+  .hero--half .hero__image {
+    max-height: 55vh;
+  }
+}
+
+/* =============================================
+   PRICING GRID SAFETY: auto-fit columns
+   Prevents empty column slots when card count ≠ --N modifier
+   ============================================= */
+.pricing-grid:not(.pricing-grid--2):not(.pricing-grid--3):not(.pricing-grid--4) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .pricing-grid.pricing-grid--3:has(> :nth-child(2):last-child) {
+    /* only 2 children present — override --3 to --2 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }

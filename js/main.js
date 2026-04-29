@@ -360,58 +360,74 @@
   }
 
   /* -----------------------------------------
-     SERVICES SIDEBAR (auto-generated)
-     Builds sticky sidebar nav from page sections
-     matching [id^="service-"]. Tracks active
-     section via IntersectionObserver.
+     SIDEBAR NAV (auto-generated, sticky)
+     Container: #services-sidebar
+     Tracks sections via IntersectionObserver.
+     Configurable via data attributes on container:
+       data-sidebar-target  — CSS selector for sections (default: '[id^="service-"]')
+       data-sidebar-heading — heading text (default: 'Services')
+       data-sidebar-cta-1   — "Label|href" for primary CTA (default: 'Book a Session|contact.html')
+       data-sidebar-cta-2   — "Label|href" for secondary CTA (omit to hide)
      ----------------------------------------- */
   var servicesSidebar = document.getElementById('services-sidebar');
-  var serviceSections = document.querySelectorAll('[id^="service-"]');
-  if (servicesSidebar && serviceSections.length) {
-    var sidebarNav = document.createElement('nav');
-    sidebarNav.className = 'services-sidebar__nav';
-    var sidebarHeading = document.createElement('p');
-    sidebarHeading.className = 'services-sidebar__heading';
-    sidebarHeading.textContent = 'Services';
-    sidebarNav.appendChild(sidebarHeading);
+  if (servicesSidebar) {
+    var targetSel = servicesSidebar.getAttribute('data-sidebar-target') || '[id^="service-"]';
+    var headingText = servicesSidebar.getAttribute('data-sidebar-heading') || 'Services';
+    var cta1 = servicesSidebar.getAttribute('data-sidebar-cta-1') || 'Book a Session|contact.html';
+    var cta2 = servicesSidebar.getAttribute('data-sidebar-cta-2');
+    var serviceSections = document.querySelectorAll(targetSel);
+    if (serviceSections.length) {
+      var sidebarNav = document.createElement('nav');
+      sidebarNav.className = 'services-sidebar__nav';
+      var sidebarHeading = document.createElement('p');
+      sidebarHeading.className = 'services-sidebar__heading';
+      sidebarHeading.textContent = headingText;
+      sidebarNav.appendChild(sidebarHeading);
 
-    serviceSections.forEach(function (section) {
-      var h2 = section.querySelector('h2');
-      if (!h2) return;
-      var link = document.createElement('a');
-      link.href = '#' + section.id;
-      link.className = 'services-sidebar__link';
-      link.textContent = h2.textContent;
-      sidebarNav.appendChild(link);
-    });
-
-    servicesSidebar.appendChild(sidebarNav);
-
-    // CTA buttons
-    var bookBtn = document.createElement('a');
-    bookBtn.href = 'contact.html';
-    bookBtn.className = 'btn btn--primary services-sidebar__btn';
-    bookBtn.textContent = 'Book a Session';
-    servicesSidebar.appendChild(bookBtn);
-
-    var priceBtn = document.createElement('a');
-    priceBtn.href = 'pricing.html';
-    priceBtn.className = 'btn btn--secondary services-sidebar__btn';
-    priceBtn.textContent = 'View Pricing';
-    servicesSidebar.appendChild(priceBtn);
-
-    // Active link tracking via IntersectionObserver
-    var sidebarLinks = servicesSidebar.querySelectorAll('.services-sidebar__link');
-    var sidebarObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          sidebarLinks.forEach(function (l) { l.classList.remove('services-sidebar__link--active'); });
-          var active = servicesSidebar.querySelector('.services-sidebar__link[href="#' + entry.target.id + '"]');
-          if (active) active.classList.add('services-sidebar__link--active');
-        }
+      serviceSections.forEach(function (section) {
+        var h2 = section.querySelector('h2');
+        if (!h2) return;
+        var link = document.createElement('a');
+        link.href = '#' + section.id;
+        link.className = 'services-sidebar__link';
+        link.textContent = h2.textContent;
+        sidebarNav.appendChild(link);
       });
-    }, { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' });
-    serviceSections.forEach(function (s) { sidebarObserver.observe(s); });
+
+      servicesSidebar.appendChild(sidebarNav);
+
+      // CTA buttons (configurable)
+      if (cta1) {
+        var parts1 = cta1.split('|');
+        var bookBtn = document.createElement('a');
+        bookBtn.href = parts1[1] || 'contact.html';
+        bookBtn.className = 'btn btn--primary services-sidebar__btn';
+        bookBtn.textContent = parts1[0] || 'Book a Session';
+        servicesSidebar.appendChild(bookBtn);
+      }
+
+      if (cta2) {
+        var parts2 = cta2.split('|');
+        var priceBtn = document.createElement('a');
+        priceBtn.href = parts2[1] || 'pricing.html';
+        priceBtn.className = 'btn btn--secondary services-sidebar__btn';
+        priceBtn.textContent = parts2[0] || 'View Pricing';
+        servicesSidebar.appendChild(priceBtn);
+      }
+
+      // Active link tracking via IntersectionObserver
+      var sidebarLinks = servicesSidebar.querySelectorAll('.services-sidebar__link');
+      var sidebarObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            sidebarLinks.forEach(function (l) { l.classList.remove('services-sidebar__link--active'); });
+            var active = servicesSidebar.querySelector('.services-sidebar__link[href="#' + entry.target.id + '"]');
+            if (active) active.classList.add('services-sidebar__link--active');
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '-80px 0px -40% 0px' });
+      serviceSections.forEach(function (s) { sidebarObserver.observe(s); });
+    }
   }
 
   /* -----------------------------------------
