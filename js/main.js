@@ -186,18 +186,30 @@
   var lightbox = document.querySelector('.lightbox');
   var lightboxImg = lightbox ? lightbox.querySelector('.lightbox__img') : null;
   var lightboxClose = lightbox ? lightbox.querySelector('.lightbox__close') : null;
+  var lightboxPrev = lightbox ? lightbox.querySelector('.lightbox__prev') : null;
+  var lightboxNext = lightbox ? lightbox.querySelector('.lightbox__next') : null;
 
   if (lightbox && lightboxImg) {
-    var galleryItems = document.querySelectorAll('.gallery__item');
-    galleryItems.forEach(function (item) {
+    var galleryItems = Array.from(document.querySelectorAll('.gallery__item'));
+    var currentLightboxIdx = 0;
+
+    function showLightboxAt(idx) {
+      if (!galleryItems.length) return;
+      currentLightboxIdx = (idx + galleryItems.length) % galleryItems.length;
+      var img = galleryItems[currentLightboxIdx].querySelector('img');
+      if (!img) return;
+      // Re-trigger entrance animation by removing/re-adding the open class
+      lightbox.classList.remove('lightbox--open');
+      void lightbox.offsetWidth; // force reflow
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt || '';
+      lightbox.classList.add('lightbox--open');
+      body.style.overflow = 'hidden';
+    }
+
+    galleryItems.forEach(function (item, i) {
       item.addEventListener('click', function () {
-        var img = item.querySelector('img');
-        if (img) {
-          lightboxImg.src = img.src;
-          lightboxImg.alt = img.alt || '';
-          lightbox.classList.add('lightbox--open');
-          body.style.overflow = 'hidden';
-        }
+        showLightboxAt(i);
       });
     });
 
@@ -210,14 +222,28 @@
       lightboxClose.addEventListener('click', closeLightbox);
     }
 
+    if (lightboxPrev) {
+      lightboxPrev.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showLightboxAt(currentLightboxIdx - 1);
+      });
+    }
+    if (lightboxNext) {
+      lightboxNext.addEventListener('click', function (e) {
+        e.stopPropagation();
+        showLightboxAt(currentLightboxIdx + 1);
+      });
+    }
+
     lightbox.addEventListener('click', function (e) {
       if (e.target === lightbox) closeLightbox();
     });
 
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && lightbox.classList.contains('lightbox--open')) {
-        closeLightbox();
-      }
+      if (!lightbox.classList.contains('lightbox--open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      else if (e.key === 'ArrowLeft' && galleryItems.length > 1) showLightboxAt(currentLightboxIdx - 1);
+      else if (e.key === 'ArrowRight' && galleryItems.length > 1) showLightboxAt(currentLightboxIdx + 1);
     });
   }
 
@@ -307,6 +333,96 @@
     revealEls.forEach(function (el) {
       el.classList.add('reveal--visible');
     });
+  }
+
+  /* -----------------------------------------
+     STAT COUNTER ANIMATION
+     Counts up from 0 to data-target on .stat__number when in view.
+     Markup: <div class="stat__number" data-target="49" data-suffix="+">0</div>
+     Honours prefers-reduced-motion (just shows the final number).
+     ----------------------------------------- */
+  var statNums = document.querySelectorAll('.stat__number[data-target]');
+  if (statNums.length) {
+    var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function runStatCounter(el) {
+      var target = parseInt(el.getAttribute('data-target'), 10);
+      var suffix = el.getAttribute('data-suffix') || '';
+      if (isNaN(target)) return;
+      if (prefersReducedMotion) {
+        el.textContent = target + suffix;
+        return;
+      }
+      var duration = 1400;
+      var start = performance.now();
+      function step(now) {
+        var progress = Math.min((now - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        el.textContent = Math.round(target * eased) + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target + suffix;
+      }
+      requestAnimationFrame(step);
+    }
+    if ('IntersectionObserver' in window) {
+      var statObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            runStatCounter(entry.target);
+            statObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.4 });
+      statNums.forEach(function (el) { statObserver.observe(el); });
+    } else {
+      // Fallback: just show the final number
+      statNums.forEach(function (el) {
+        el.textContent = el.getAttribute('data-target') + (el.getAttribute('data-suffix') || '');
+      });
+    }
+  }
+
+  /* -----------------------------------------
+     HERO HEADING WORD-BY-WORD BLUR-FADE
+     Opt-in via .hero__heading--animate. Splits the heading into
+     <span class="word"> spans with staggered animation-delay.
+     Triggered by adding .anim-in (we add it on next paint).
+     Honours prefers-reduced-motion.
+     ----------------------------------------- */
+  var animatedHeading = document.querySelector('.hero__heading--animate');
+  if (animatedHeading) {
+    var prefersReducedMotionH = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotionH) {
+      // Skip animation — just make sure the heading is visible
+      animatedHeading.classList.add('anim-in');
+    } else {
+      // Walk text nodes, split on whitespace, wrap each word in a span
+      var walker = document.createTreeWalker(animatedHeading, NodeFilter.SHOW_TEXT, null);
+      var textNodes = [];
+      var n; while ((n = walker.nextNode())) textNodes.push(n);
+      var idx = 0;
+      textNodes.forEach(function (tn) {
+        if (!tn.textContent.trim()) return;
+        var parts = tn.textContent.split(/(\s+)/);
+        var frag = document.createDocumentFragment();
+        parts.forEach(function (p) {
+          if (!p) return;
+          if (!p.trim()) { frag.appendChild(document.createTextNode(p)); return; }
+          var s = document.createElement('span');
+          s.className = 'word';
+          s.style.animationDelay = (idx * 0.07) + 's';
+          s.textContent = p;
+          frag.appendChild(s);
+          idx++;
+        });
+        tn.parentNode.replaceChild(frag, tn);
+      });
+      // Trigger after a short delay (rAF can be unreliable in headless previews)
+      setTimeout(function () {
+        animatedHeading.classList.add('anim-in');
+        var hero = animatedHeading.closest('.hero');
+        if (hero) hero.classList.add('hero--animated-ready');
+      }, 50);
+    }
   }
 
   /* -----------------------------------------

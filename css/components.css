@@ -623,9 +623,24 @@
 
 .nav-scroll__brand {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
   min-width: 0;
+}
+
+.nav-scroll__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nav-scroll__logo {
+  height: 40px;
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
 .nav-scroll__name {
@@ -1146,6 +1161,9 @@ body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nt
     grid-template-columns: 1fr 1fr;
     min-height: 560px;
   }
+  /* v1.4 — column ratio modifiers (override the default 1fr 1fr) */
+  .hero--half--text-wide .hero__inner   { grid-template-columns: 1.45fr 1fr; }
+  .hero--half--image-wide .hero__inner  { grid-template-columns: 1fr 1.45fr; }
 
   .hero--half .hero__image-wrap {
     order: 1;
@@ -1156,7 +1174,16 @@ body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nt
     order: 2;
     padding: var(--space-3xl) var(--space-3xl) var(--space-3xl) var(--space-2xl);
   }
+  /* v1.4 — flip image to the right (text-left layout) */
+  .hero--half--image-right .hero__image-wrap { order: 2; }
+  .hero--half--image-right .hero__content    { order: 1; }
 }
+
+/* v1.4 NOTE — .hero--half ships with a max-height: 85vh safety cap on
+   .hero__inner / __image-wrap / __image / __content (defined later in this
+   file). To opt out for a taller hero, set max-height: none on those four
+   selectors in your theme.css — do this only when the design genuinely
+   needs it; the cap exists to prevent the hero hiding the next section. */
 
 @media (min-width: 1024px) {
   .hero--half .hero__content {
@@ -2252,10 +2279,10 @@ body:has(.nav--transparent) .hero--showcase {
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--aesthetic-radius);
   padding: var(--space-xl);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-light);
+  box-shadow: var(--aesthetic-shadow-card);
+  border: var(--aesthetic-border-width) solid var(--color-border-light);
   transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
@@ -2358,10 +2385,10 @@ a.card--service:hover .card__link {
 /* Feature Card Variant */
 .card--feature {
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  border: var(--aesthetic-border-width) solid var(--color-border-light);
+  box-shadow: var(--aesthetic-shadow-card);
   padding: var(--space-xl);
-  border-radius: var(--radius-lg);
+  border-radius: var(--aesthetic-radius);
   text-align: center;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
@@ -2512,8 +2539,8 @@ a.card--service:hover .card__link {
 .form__select {
   width: 100%;
   padding: var(--space-md);
-  border: 2px solid #ced1d5;
-  border-radius: var(--radius-md);
+  border: calc(var(--aesthetic-border-width) + 1px) solid #ced1d5;
+  border-radius: var(--aesthetic-radius);
   background-color: var(--color-surface);
   font-size: var(--text-base);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -2890,8 +2917,11 @@ a.card--service:hover .card__link {
 }
 
 .approach-item {
-  display: flex;
-  gap: var(--space-lg);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: var(--space-lg);
+  row-gap: var(--space-xs);
+  align-items: start;
   padding: var(--space-lg);
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -2899,10 +2929,9 @@ a.card--service:hover .card__link {
 }
 
 .approach-item__number {
-  flex-shrink: 0;
+  grid-row: 1 / span 2;
   width: 56px;
   height: 56px;
-  min-width: 56px;
   border-radius: var(--radius-full);
   background-color: var(--color-primary);
   color: var(--color-text-inverse);
@@ -2916,14 +2945,17 @@ a.card--service:hover .card__link {
 }
 
 .approach-item h3 {
+  grid-column: 2;
   font-size: calc(var(--text-h3-desktop) * 0.8);
-  margin-bottom: var(--space-sm);
+  margin: 0;
 }
 
 .approach-item p {
+  grid-column: 2;
   font-size: var(--text-sm);
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
+  margin: 0;
 }
 
 @media (min-width: 768px) {
@@ -3393,6 +3425,16 @@ a.card--service:hover .card__link {
 
 .page-header--image p {
   color: rgba(255, 255, 255, 0.9);
+}
+
+/* Pill-style label on image page-headers for legibility on busy backgrounds */
+.page-header--image .section-label {
+  background-color: rgba(255, 255, 255, 0.92);
+  color: var(--color-secondary-dark);
+  padding: 0.4em 0.9em;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.08em;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 /* Secondary meta line under subtitle (e.g. credentials strip on issue pages) */
@@ -3902,7 +3944,15 @@ a.card--service:hover .card__link {
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
   font-size: var(--text-sm);
-  margin: 0;
+  margin: 0 0 var(--space-md);
+}
+
+.highlight-box__content p:last-child {
+  margin-bottom: 0;
+}
+
+.highlight-box__content .btn {
+  margin-top: var(--space-md);
 }
 
 /* Secondary colour variant */
@@ -4889,7 +4939,7 @@ a.card--service:hover .card__link {
 
 .info-band__title {
   font-family: var(--font-heading);
-  font-size: var(--text-base);
+  font-size: var(--text-md);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -6176,6 +6226,18 @@ a.card--service:hover .card__link {
   border-radius: var(--radius-md);
 }
 
+/* v1.4 — entrance animation when lightbox opens */
+@keyframes lightbox-img-in {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.lightbox--open .lightbox__img {
+  animation: lightbox-img-in 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lightbox--open .lightbox__img { animation: none; }
+}
+
 .lightbox__close {
   position: absolute;
   top: var(--space-lg);
@@ -6192,10 +6254,49 @@ a.card--service:hover .card__link {
   align-items: center;
   justify-content: center;
   transition: background var(--transition-fast);
+  z-index: 2;
 }
 
 .lightbox__close:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+/* v1.4 — prev/next navigation buttons (auto-wired by main.js when present) */
+.lightbox__prev,
+.lightbox__next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  font-size: 2rem;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  font-family: inherit;
+  padding: 0 0 6px 0;
+  z-index: 2;
+}
+.lightbox__prev { left: var(--space-lg); }
+.lightbox__next { right: var(--space-lg); }
+.lightbox__prev:hover,
+.lightbox__next:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-50%) scale(1.05);
+}
+@media (max-width: 540px) {
+  .lightbox__prev,
+  .lightbox__next { width: 44px; height: 44px; font-size: 1.5rem; }
+  .lightbox__prev { left: var(--space-sm); }
+  .lightbox__next { right: var(--space-sm); }
 }
 
 /* =============================================
@@ -6374,7 +6475,7 @@ a.card--service:hover .card__link {
   align-items: center;
   gap: var(--space-xs);
   padding: 2px var(--space-sm);
-  border-radius: 100px;
+  border-radius: var(--aesthetic-radius-pill);
   font-size: var(--text-xs);
   font-weight: var(--font-weight-semibold);
   line-height: 1.6;
@@ -7428,4 +7529,568 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
     margin-left: auto;
     margin-right: auto;
   }
+}
+/* =============================================
+   LOGO TICKER
+   Infinite-scroll horizontal marquee for client logos.
+   Markup pattern: duplicate the .logo-ticker__item set inside the
+   track so the loop is seamless (translate -50% on the track).
+   Use real <img> logos OR .logo-ticker__pill text fallbacks.
+   ============================================= */
+.logo-ticker {
+  width: 100%;
+  overflow: hidden;
+  background-color: var(--color-bg);
+}
+.logo-ticker__label {
+  display: block;
+  text-align: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+  margin-bottom: var(--space-lg);
+}
+.logo-ticker__viewport {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0, #000 10%, #000 90%, transparent 100%);
+}
+@keyframes logo-ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.logo-ticker__track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  padding: 0 var(--space-lg);
+  width: max-content;
+  animation: logo-ticker-scroll 40s linear infinite;
+}
+.logo-ticker:hover .logo-ticker__track { animation-play-state: paused; }
+/* v1.4 modifiers — opt-out of the edge fade-mask and/or hover-pause */
+.logo-ticker--no-fade .logo-ticker__viewport {
+  -webkit-mask-image: none;
+          mask-image: none;
+}
+.logo-ticker--no-pause:hover .logo-ticker__track { animation-play-state: running; }
+.logo-ticker__item {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+}
+.logo-ticker__logo {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  opacity: 0.7;
+  transition: opacity 0.18s;
+}
+.logo-ticker__logo:hover { opacity: 1; }
+.logo-ticker__pill {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+  color: var(--color-text-light);
+  padding: var(--space-sm) var(--space-lg);
+  border: var(--aesthetic-border-width) solid var(--color-border);
+  border-radius: var(--aesthetic-radius-pill);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-ticker__track { animation: none; }
+  .logo-ticker__viewport { overflow-x: auto; }
+}
+
+/* =============================================
+   CARD: IMAGE-TOP VARIANT + BADGE
+   .card--image-top — service/team card with photo at the top.
+   Pair with .card__image (the <img>) and optional .card__badge
+   (corner ribbon pill).
+   ============================================= */
+.card--image-top {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+.card--image-top .card__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: var(--color-bg-alt);
+}
+.card--image-top .card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.card--image-top .card__body {
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.card--image-top .card__title {
+  margin-bottom: var(--space-sm);
+}
+.card--image-top .card__text {
+  margin-bottom: var(--space-md);
+  flex: 1;
+}
+.card__badge {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 2;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--aesthetic-radius-pill);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+.card__badge--accent { background-color: var(--color-accent); }
+/* Square aspect for team portraits */
+.card--image-top.card--portrait .card__image-wrap { aspect-ratio: 1 / 1; }
+
+/* =============================================
+   STAT extensions — additive to existing .stats / .stat / .stat__number
+   block (line ~4618). Adds a sub-line element + accent-coloured number
+   variant. Use .stats with .stat children; .stat__number for the big
+   figure, .stat__label for the heading, .stat__sub for an optional
+   small caption beneath. Pair with .stat--card for a boxed look.
+   ============================================= */
+.stat__number--accent { color: var(--color-accent); }
+.stat__sub {
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+  margin-top: var(--space-xs);
+}
+
+/* =============================================
+   ANNOUNCEMENT BAR extensions — additive to existing .announcement-bar
+   block (line ~5487). The base bar is a centred single-line strip;
+   these modifiers let you build a richer "pill + message + CTA link"
+   layout used for time-bound promos (e.g. MHAW). Markup:
+   <div class="announcement-bar">
+     <div class="announcement-bar__inner container">
+       <span class="announcement-bar__msg">
+         <span class="announcement-bar__pill">Now Booking</span>
+         Limited spaces this month
+       </span>
+       <a href="#" class="announcement-bar__link">Get in touch →</a>
+     </div>
+   </div>
+   ============================================= */
+.announcement-bar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+.announcement-bar__msg {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: var(--font-weight-medium);
+}
+.announcement-bar__pill {
+  display: inline-block;
+  background-color: rgba(255,255,255,0.18);
+  color: var(--color-text-inverse);
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px var(--space-sm);
+  border-radius: var(--aesthetic-radius-pill);
+}
+.announcement-bar--subtle .announcement-bar__pill {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+.announcement-bar__link {
+  color: var(--color-text-inverse);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  opacity: 0.9;
+  transition: opacity 0.18s;
+  text-decoration: none;
+  margin-left: 0;
+}
+.announcement-bar--subtle .announcement-bar__link { color: var(--color-primary); }
+.announcement-bar__link:hover { opacity: 1; }
+.announcement-bar--accent { background-color: var(--color-accent); }
+@media (max-width: 640px) {
+  .announcement-bar__inner { justify-content: center; text-align: center; }
+}
+
+/* =============================================
+   GALLERY: aspect modifiers + caption overlay + mobile collapse
+   ADDITIVE to the existing .gallery / .gallery__item / .lightbox
+   block above (line ~6144). Existing .gallery__item is 1:1; these
+   modifiers let you opt into 4:3, 3:4, or 16:9, plus add an
+   optional hover-revealed caption.
+   ============================================= */
+.gallery__item--landscape { aspect-ratio: 4 / 3; }
+.gallery__item--portrait  { aspect-ratio: 3 / 4; }
+.gallery__item--wide      { aspect-ratio: 16 / 9; }
+
+.gallery__caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: var(--space-md);
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  color: #fff;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 1;
+}
+.gallery__item:hover .gallery__caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile collapse: show only first 4 until .gallery--expanded */
+@media (max-width: 540px) {
+  .gallery--collapsible .gallery__item:nth-child(n+5) { display: none; }
+  .gallery--collapsible.gallery--expanded .gallery__item:nth-child(n+5) { display: block; }
+}
+
+/* =============================================
+   PROCESS GRID
+   3- or 4-step process visualization with image per step.
+   Different from .approach-grid (text + numbered circles only).
+   Markup: .process-grid > .process-step (each containing
+   .process-step__image, .process-step__num, .process-step__title,
+   .process-step__text).
+   ============================================= */
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-xl);
+  counter-reset: process;
+}
+@media (min-width: 768px) {
+  .process-grid { grid-template-columns: repeat(3, 1fr); }
+  .process-grid--4 { grid-template-columns: repeat(4, 1fr); }
+}
+.process-step {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+.process-step__image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background-color: var(--color-bg-alt);
+}
+.process-step__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.process-step__num {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
+  z-index: 2;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-md);
+  line-height: 1;
+  box-shadow: var(--shadow-md);
+}
+/* v1.4 — centered number above title in body (transparent bg, white border).
+   Move .process-step__num inside .process-step__body and add
+   .process-step--num-centered on the parent .process-step. */
+.process-step--num-centered .process-step__body { text-align: center; }
+.process-step--num-centered .process-step__num {
+  position: static;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto var(--space-sm);
+  background-color: transparent;
+  color: currentColor;
+  border: 2px solid currentColor;
+  box-shadow: none;
+  font-size: 1rem;
+}
+.process-step__body {
+  padding: var(--space-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.process-step__title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-h3-mobile);
+  margin-bottom: var(--space-sm);
+  color: var(--color-text-heading);
+}
+.process-step__text {
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* =============================================
+   HERO FLOATING STAT CARDS
+   Glass-morphism cards positioned absolutely over the hero image.
+   Add .hero__floats wrapper inside .hero__image-wrap with
+   .hero__float--tl / --tr / --bl / --br for corner placement.
+   Hidden on mobile (image is already cropped tight there).
+
+   v1.4 CANTILEVER PATTERN
+   For floats that should hang past the image edge (drama like the
+   ref-page hero), wrap the <img> in a child <div class="hero__image-clip">
+   and add .hero--floats-cantilever to .hero__image-wrap. The clip
+   keeps the image rounded/cropped while the wrap allows floats with
+   .hero__float--out-r / --out-l to extend past its edges.
+   ============================================= */
+.hero__floats {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+/* Cantilever support — only kicks in when authors add the modifier */
+.hero__image-wrap.hero--floats-cantilever { overflow: visible; }
+.hero__image-wrap.hero--floats-cantilever .hero__image-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+}
+.hero__float--out-r { right: -16px !important; }
+.hero__float--out-l { left: -16px !important; }
+.hero__float--out-t { top: -16px !important; }
+.hero__float--out-b { bottom: -16px !important; }
+.hero__float {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.14);
+  min-width: 140px;
+  pointer-events: auto;
+}
+.hero__float--accent {
+  background-color: rgba(46, 127, 216, 0.92); /* falls back; primary-tinted variants below */
+}
+.hero__float--primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+.hero__float--primary .hero__float-num,
+.hero__float--primary .hero__float-label,
+.hero__float--primary .hero__float-sub { color: var(--color-text-inverse); }
+.hero__float--tl { top: var(--space-lg); left: var(--space-lg); }
+.hero__float--tr { top: var(--space-lg); right: var(--space-lg); }
+.hero__float--bl { bottom: var(--space-lg); left: var(--space-lg); }
+.hero__float--br { bottom: var(--space-lg); right: var(--space-lg); }
+.hero__float--mr { top: 50%; right: var(--space-lg); transform: translateY(-50%); }
+.hero__float--ml { top: 50%; left: var(--space-lg); transform: translateY(-50%); }
+.hero__float-num {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-bold);
+  font-size: 1.75rem;
+  line-height: 1;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+.hero__float-num--accent { color: var(--color-accent); }
+.hero__float-label {
+  font-size: 0.7rem;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-heading);
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+.hero__float-sub {
+  font-size: 0.62rem;
+  color: var(--color-text-light);
+  margin-top: 1px;
+}
+@media (max-width: 767px) {
+  .hero__floats { display: none; }
+}
+
+/* =============================================
+   CTA BANNER — SPLIT-IMAGE VARIANT
+   Two-column layout: text left (dark bg), image right with
+   gradient mask fading into the dark bg. Strong for time-bound
+   offers, MHAW, sales windows, etc.
+   ============================================= */
+.cta-banner--split {
+  text-align: left;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  min-height: 340px;
+  overflow: hidden;
+  position: relative;
+  /* v1.4 — prevent grid auto-min-content from forcing children wider than viewport */
+  min-width: 0;
+}
+.cta-banner--split > * { min-width: 0; }
+.cta-banner--split .cta-banner__content {
+  padding: var(--space-3xl) var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 2;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.cta-banner--split h2,
+.cta-banner--split p { margin-left: 0; margin-right: 0; max-width: none; }
+.cta-banner--split .cta-banner__buttons { justify-content: flex-start; }
+.cta-banner__image-wrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 240px;
+}
+.cta-banner__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cta-banner__image-fade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right,
+    var(--color-primary-dark) 0%,
+    rgba(0,0,0,0.4) 45%,
+    rgba(0,0,0,0.15) 100%);
+}
+@media (min-width: 768px) {
+  .cta-banner--split { grid-template-columns: 1fr 1fr; }
+  .cta-banner__image-wrap { min-height: 100%; }
+}
+
+/* =============================================
+   RATED PILL
+   Small inline badge for awards / ratings ("Rated #1 by …").
+   Pairs nicely below a logo strip or hero. Inline-flex with
+   optional star/icon slot.
+   ============================================= */
+.rated-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background-color: var(--color-surface);
+  border: calc(var(--aesthetic-border-width) + 0.5px) solid var(--color-primary);
+  border-radius: var(--aesthetic-radius-pill);
+  padding: var(--space-sm) var(--space-lg);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+  box-shadow: var(--shadow-sm);
+}
+.rated-pill__icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent);
+}
+.rated-pill__highlight { color: var(--color-primary); }
+.rated-pill--accent { border-color: var(--color-accent); }
+.rated-pill--accent .rated-pill__highlight { color: var(--color-accent); }
+
+/* =============================================
+   v1.4 — HERO HEADING WORD-BY-WORD ANIMATION
+   Opt-in: add .hero__heading--animate to your <h1>.
+   main.js wraps each word in <span class="word"> and adds
+   .anim-in to trigger the animation on next paint.
+   ============================================= */
+@keyframes hero-word-in {
+  from { opacity: 0; filter: blur(8px); transform: translateY(6px); }
+  to   { opacity: 1; filter: blur(0);   transform: translateY(0); }
+}
+.hero__heading--animate .word {
+  display: inline-block;
+  opacity: 0;
+  white-space: pre;
+}
+.hero__heading--animate.anim-in .word {
+  animation: hero-word-in 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero__heading--animate .word { opacity: 1; animation: none; filter: none; transform: none; }
+}
+
+/* =============================================
+   v1.4 — STAT COUNTER (visual hint for tabular numerals)
+   The animation logic is in main.js (data-target driven).
+   ============================================= */
+.stat__number[data-target] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* =============================================
+   v1.4 — PILL GLOW UTILITY
+   Reusable animated box-shadow ring for any pill / badge /
+   .announcement-bar__pill / .section-label / .mhaw-style call-out.
+   Inherits its glow colour from the pill's currentColor by default.
+   Override with --pill-glow-rgb (R,G,B triplet) to set a fixed colour.
+   ============================================= */
+@keyframes pill-glow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 0 rgba(var(--pill-glow-rgb, 59,130,246), 0.5),
+      0 0 12px 0 rgba(var(--pill-glow-rgb, 59,130,246), 0.6);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(var(--pill-glow-rgb, 59,130,246), 0),
+      0 0 22px 2px rgba(var(--pill-glow-rgb, 59,130,246), 0.9);
+  }
+}
+.pill--glow {
+  animation: pill-glow 2.6s ease-in-out infinite;
+}
+.pill--glow-accent { --pill-glow-rgb: 232,100,42; }
+.pill--glow-primary { --pill-glow-rgb: 46,127,216; }
+@media (prefers-reduced-motion: reduce) {
+  .pill--glow { animation: none; }
 }

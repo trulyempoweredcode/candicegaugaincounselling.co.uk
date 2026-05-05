@@ -67,6 +67,17 @@
   --transition-base: 250ms ease;
   --transition-normal: 300ms ease;
   --transition-slow: 400ms ease;
+
+  /* === v1.5 Aesthetic dials ===
+     Per-site theme.css overrides these to flip a site's visual aesthetic
+     (sharp / soft / brutalist / luxe / editorial). Defaults preserve the
+     current "soft modern" look so existing sites are unchanged.
+     Pills always read --aesthetic-radius-pill (fixed 999px) so they
+     stay pill-shaped regardless of the dial. */
+  --aesthetic-radius:        14px;
+  --aesthetic-radius-pill:   999px;
+  --aesthetic-shadow-card:   0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+  --aesthetic-border-width:  1px;
 }
 
 /* --- Reset --- */
@@ -244,10 +255,10 @@ strong {
   font-size: var(--text-base);
   font-weight: var(--font-weight-medium);
   line-height: 1;
-  border-radius: var(--radius-md);
+  border-radius: var(--aesthetic-radius);
   transition: all var(--transition-base);
   text-decoration: none;
-  border: 2px solid transparent;
+  border: calc(var(--aesthetic-border-width) + 1px) solid transparent;
   white-space: nowrap;
 }
 
@@ -346,6 +357,19 @@ strong {
   color: var(--color-secondary-dark);
   margin-bottom: var(--space-sm);
 }
+/* v1.4 — pill variant: dark-navy bg, white text, compact (matches hero label) */
+.section-label--pill {
+  background-color: var(--color-secondary);
+  color: var(--color-text-inverse);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 5px 13px;
+  border-radius: 5px;
+  margin-bottom: 14px;
+}
+.section-label--pill-accent { background-color: var(--color-accent); color: var(--color-text-inverse); }
+.section-label--pill-primary { background-color: var(--color-primary); color: var(--color-text-inverse); }
 
 /* --- Responsive Typography --- */
 @media (min-width: 768px) {
