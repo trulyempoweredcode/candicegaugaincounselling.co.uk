@@ -248,9 +248,12 @@
   }
 
   /* -----------------------------------------
-     ANTI-SPAM: Timestamp field
+     ANTI-SPAM: Timestamp + page identifier
      Set _t to page load time (epoch ms) so the
      server can reject instant bot submissions.
+     Set _page to the current pathname so server
+     error alerts can identify which page hosted
+     the broken form.
      ----------------------------------------- */
   var tsField = document.querySelector('input[name="_t"]');
   if (tsField) {
