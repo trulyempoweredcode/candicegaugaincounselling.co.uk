@@ -256,6 +256,10 @@
   if (tsField) {
     tsField.value = Date.now().toString();
   }
+  var pageField = document.querySelector('input[name="_page"]');
+  if (pageField) {
+    pageField.value = window.location.pathname || '/';
+  }
 
   /* -----------------------------------------
      CONTACT FORM — AJAX SUBMISSION
