@@ -1496,3 +1496,40 @@
     accent-color: var(--color-primary-dark);
     cursor: pointer;
 }
+
+
+/* === BACKFILL: rules dropped by template update to v1.5.4 ===
+   2 rule(s) preserved automatically because their classes are
+   still referenced in this site's HTML. Move into proper site partials
+   if you want, but do NOT delete unless you've also removed the markup.
+   ===================================================== */
+
+.reveal .grid--2 > *,
+.reveal .grid--3 > *,
+.reveal .grid--4 > *,
+.reveal .grid--bento > *,
+.reveal .steps > *,
+.reveal .testimonial-grid > *,
+.reveal .pricing-grid > *,
+.reveal .team-grid > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal .grid--2 > *,
+    .reveal .grid--3 > *,
+    .reveal .grid--4 > *,
+    .reveal .grid--bento > *,
+    .reveal .steps > *,
+    .reveal .testimonial-grid > *,
+    .reveal .pricing-grid > *,
+    .reveal .team-grid > * {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+}
+
+/* === END BACKFILL === */

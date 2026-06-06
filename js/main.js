@@ -323,7 +323,7 @@
       });
     }, {
       threshold: 0.05,
-      rootMargin: '0px 0px 80px 0px'
+      rootMargin: '0px 0px -120px 0px'
     });
 
     revealEls.forEach(function (el) {
