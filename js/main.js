@@ -322,18 +322,37 @@
         }
       });
     }, {
-      threshold: 0.05,
-      rootMargin: '0px 0px -120px 0px'
+      threshold: 0.08,
+      rootMargin: '0px 0px -10% 0px'
     });
 
-    revealEls.forEach(function (el) {
-      // Immediately reveal elements already in the viewport on page load
-      var rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight && rect.bottom > 0) {
-        el.classList.add('reveal--visible');
-      } else {
-        revealObserver.observe(el);
-      }
+    // Observe every reveal element. IntersectionObserver evaluates against the
+    // real, post-layout geometry on its first async callback, so elements that
+    // are genuinely in the initial viewport reveal right away while below-the-
+    // fold elements wait until they are scrolled into view.
+    //
+    // IMPORTANT: do NOT pre-reveal with a synchronous getBoundingClientRect()
+    // loop at script-execution time. main.js runs before images finish loading;
+    // if an image hasn't reserved its height yet the document is collapsed, so
+    // below-the-fold sections measure as "in viewport" and get revealed at once
+    // — that is the bug where the whole page animates in on load and nothing
+    // animates on scroll. Letting the observer do the work avoids it entirely.
+    revealEls.forEach(function (el) { revealObserver.observe(el); });
+
+    // Safety net (after full load): reveal anything still hidden that sits in
+    // the initial viewport, so above-the-fold content can never get stuck.
+    // Guarded to the top of the viewport so it never reveals below-fold blocks.
+    window.addEventListener('load', function () {
+      requestAnimationFrame(function () {
+        var vh = window.innerHeight;
+        revealEls.forEach(function (el) {
+          if (el.classList.contains('reveal--visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.85 && r.bottom > 0) {
+            el.classList.add('reveal--visible');
+          }
+        });
+      });
     });
   } else {
     // Fallback: show everything immediately if no IntersectionObserver

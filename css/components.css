@@ -7168,6 +7168,57 @@ a.card--service:hover .card__link {
 .reveal--visible .quals-list > *:nth-child(9) { transition-delay: 0.8s; }
 .reveal--visible .quals-list > *:nth-child(10) { transition-delay: 0.9s; }
 
+/* Directional reveal — split columns slide in from their own side as the
+   section enters view (text from the left, image from the right).
+   MOBILE-SAFE: below 768px .split is a single stacked column, so a horizontal
+   slide would push a child past the viewport edge (a ~10px horizontal scrollbar)
+   AND read oddly. So mobile uses a plain fade-up; the directional X-slide only
+   applies at >=768px, where the two columns sit side by side. */
+.reveal .split__text,
+.reveal .split__content,
+.reveal .split__image,
+.reveal .split__image-placeholder {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .reveal .split__text,
+  .reveal .split__content { transform: translateX(-34px); }
+  .reveal .split__image,
+  .reveal .split__image-placeholder { transform: translateX(34px); }
+  /* Reversed splits: flip the slide directions to match the visual order */
+  .reveal .split--reverse .split__text,
+  .reveal .split--reverse .split__content { transform: translateX(34px); }
+  .reveal .split--reverse .split__image,
+  .reveal .split--reverse .split__image-placeholder { transform: translateX(-34px); }
+}
+
+.reveal--visible .split__text,
+.reveal--visible .split__content,
+.reveal--visible .split__image,
+.reveal--visible .split__image-placeholder {
+  opacity: 1;
+  transform: none;
+}
+
+/* Checklist grid cascade — same staggered fade-up as the other grids/lists */
+.reveal .checklist-grid > * {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal--visible .checklist-grid > * { opacity: 1; transform: translateY(0); }
+.reveal--visible .checklist-grid > *:nth-child(1) { transition-delay: 0s; }
+.reveal--visible .checklist-grid > *:nth-child(2) { transition-delay: 0.08s; }
+.reveal--visible .checklist-grid > *:nth-child(3) { transition-delay: 0.16s; }
+.reveal--visible .checklist-grid > *:nth-child(4) { transition-delay: 0.24s; }
+.reveal--visible .checklist-grid > *:nth-child(5) { transition-delay: 0.32s; }
+.reveal--visible .checklist-grid > *:nth-child(6) { transition-delay: 0.40s; }
+.reveal--visible .checklist-grid > *:nth-child(7) { transition-delay: 0.48s; }
+.reveal--visible .checklist-grid > *:nth-child(8) { transition-delay: 0.56s; }
+
 /* Respect reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   .reveal {
@@ -7184,6 +7235,11 @@ a.card--service:hover .card__link {
   .reveal .pricing-grid > *,
   .reveal .team-grid > *,
   .reveal .quals-list > *,
+  .reveal .checklist-grid > *,
+  .reveal .split__text,
+  .reveal .split__content,
+  .reveal .split__image,
+  .reveal .split__image-placeholder,
   .reveal .fee-table {
     opacity: 1;
     transform: none;
