@@ -9495,6 +9495,25 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
   margin-top: var(--space-2xs);
 }
 
+/* Custom tick-box question (e.g. a required "I agree to the terms") —
+   the label is the whole tap target (v1.7.2). */
+.booking-form .booking-checkbox label {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  cursor: pointer;
+  color: var(--color-text);
+  line-height: var(--line-height-relaxed);
+}
+
+.booking-form .booking-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+}
+
 .booking-form .booking-submit {
   width: 100%;
   margin-top: var(--space-sm);

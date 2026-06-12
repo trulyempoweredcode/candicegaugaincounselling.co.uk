@@ -312,6 +312,32 @@
     }
 
     /* ── Step 4: details + submit ─────────────── */
+
+    /* Practitioner-configured extra questions (state.config.custom_fields:
+       {id, label, type text|textarea|checkbox, required}, max 5 — e.g. a
+       mandatory "I agree to the terms" tick box). The server re-validates
+       every answer against the same config. */
+    function customFieldsHtml(prefillAnswers) {
+      var html = '';
+      (state.config.custom_fields || []).forEach(function (cf) {
+        var inputId = 'bk-cf-' + cf.id;
+        var prev = prefillAnswers[cf.id];
+        var starred = esc(cf.label) + (cf.required ? ' *' : '');
+        if (cf.type === 'checkbox') {
+          html += '<div class="form__group booking-checkbox"><label for="' + inputId + '">' +
+            '<input type="checkbox" id="' + inputId + '" data-cf="' + esc(cf.id) + '"' + (prev ? ' checked' : '') + '>' +
+            '<span>' + starred + '</span></label></div>';
+        } else if (cf.type === 'textarea') {
+          html += '<div class="form__group"><label class="form__label" for="' + inputId + '">' + starred + '</label>' +
+            '<textarea class="form__textarea" id="' + inputId + '" data-cf="' + esc(cf.id) + '" rows="3" maxlength="2000">' + esc(prev || '') + '</textarea></div>';
+        } else {
+          html += '<div class="form__group"><label class="form__label" for="' + inputId + '">' + starred + '</label>' +
+            '<input class="form__input" id="' + inputId + '" data-cf="' + esc(cf.id) + '" type="text" maxlength="500" value="' + esc(prev || '') + '"></div>';
+        }
+      });
+      return html;
+    }
+
     function renderForm(prefill, notice) {
       setStep(4);
       prefill = prefill || {};
@@ -333,6 +359,7 @@
             '<input class="form__input" id="bk-phone" name="phone" type="tel" maxlength="50" value="' + esc(prefill.phone || '') + '"></div>' +
           '<div class="form__group"><label class="form__label" for="bk-notes">Anything we should know?</label>' +
             '<textarea class="form__textarea" id="bk-notes" name="notes" rows="3" maxlength="2000">' + esc(prefill.notes || '') + '</textarea></div>' +
+          customFieldsHtml(prefill.custom_answers || {}) +
           '<div class="booking-hp"><label>Leave this field empty<input type="text" name="_hp" tabindex="-1" autocomplete="off"></label></div>' +
           (state.config.cancellation_policy_text ? '<p class="booking-policy-note">' + esc(state.config.cancellation_policy_text) + '</p>' : '') +
           '<button type="submit" class="btn btn--primary booking-submit">' + esc(ctaLabel(svc)) + '</button>' +
@@ -353,6 +380,29 @@
           form.querySelector(!name ? '#bk-name' : '#bk-email').focus();
           return;
         }
+        var customAnswers = {};
+        var cfProblem = null;
+        (state.config.custom_fields || []).forEach(function (cf) {
+          var el = form.querySelector('[data-cf="' + cf.id + '"]');
+          if (!el) return;
+          if (cf.type === 'checkbox') {
+            customAnswers[cf.id] = el.checked;
+            if (cf.required && !el.checked && !cfProblem) {
+              cfProblem = { el: el, msg: 'Please tick "' + cf.label + '" to continue' };
+            }
+          } else {
+            var v = el.value.trim();
+            customAnswers[cf.id] = v;
+            if (cf.required && !v && !cfProblem) {
+              cfProblem = { el: el, msg: 'Please fill in "' + cf.label + '"' };
+            }
+          }
+        });
+        if (cfProblem) {
+          announce(cfProblem.msg);
+          cfProblem.el.focus();
+          return;
+        }
         var submitBtn = form.querySelector('.booking-submit');
         submitBtn.disabled = true;
         submitBtn.textContent = 'Booking…';
@@ -364,6 +414,7 @@
           email: email,
           phone: form.phone.value.trim(),
           notes: form.notes.value.trim(),
+          custom_answers: customAnswers,
           _hp: form._hp.value,
           _t: openedAt
         };
