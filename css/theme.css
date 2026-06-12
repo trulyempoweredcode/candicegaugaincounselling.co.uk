@@ -1559,3 +1559,297 @@
 }
 
 /* === END BACKFILL === */
+
+
+/* === BACKFILL: rules dropped by template update to v1.7.1 ===
+   42 rule(s) preserved automatically because their classes are
+   still referenced in this site's HTML. Move into proper site partials
+   if you want, but do NOT delete unless you've also removed the markup.
+   ===================================================== */
+
+.nav__link:hover,
+.nav__link--active {
+  color: var(--color-primary);
+}
+
+.nav__link:hover::after,
+.nav__link--active::after {
+  width: 100%;
+}
+
+.nav__mobile .nav__link,
+.nav__mobile .btn {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.nav__mobile--open .nav__link,
+.nav__mobile--open .btn {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.nav__mobile .nav__mobile-contact a,
+.nav__mobile .nav__mobile-contact .nav__contact-item {
+  color: var(--color-text);
+}
+
+.hero--slope-dark .hero__content,
+.hero--slope-light .hero__content {
+  padding: var(--space-xl) var(--space-2xl) var(--space-2xl);
+}
+
+.hero--slope-dark .hero__content,
+.hero--slope-light .hero__content {
+  order: 2;
+  position: relative;
+  z-index: 1;
+}
+
+@media (min-width: 768px) {
+  .hero--slope-dark .hero__content,
+    .hero--slope-light .hero__content {
+      order: 2;
+      padding: 0;
+    }
+}
+
+@media (min-width: 768px) {
+  .hero--slope-dark.hero--reverse .hero__content,
+    .hero--slope-light.hero--reverse .hero__content {
+      order: 1;
+    }
+}
+
+@media (max-width: 767px) {
+  .hero--showcase .hero__actions,
+    .hero--showcase .hero__ticks {
+      flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 767px) {
+  .hero--showcase-center .hero__content,
+    .hero--showcase-right .hero__content {
+      text-align: left;
+    }
+}
+
+@media (max-width: 767px) {
+  .hero--showcase-center .hero__actions,
+    .hero--showcase-right .hero__actions {
+      justify-content: flex-start;
+    }
+}
+
+.nav--transparent-dark .nav__name,
+.nav--transparent-dark .nav__link {
+  color: var(--color-text-inverse);
+}
+
+.nav--transparent-dark .nav__link:hover,
+.nav--transparent-dark .nav__link--active {
+  color: var(--color-secondary-light);
+}
+
+.nav--transparent-dark .nav__toggle span,
+.nav--transparent-dark .nav__toggle-bar {
+  background-color: var(--color-text-inverse);
+}
+
+.nav--transparent-dark .nav__mobile .nav__link:hover,
+.nav--transparent-dark .nav__mobile .nav__link--active {
+  color: var(--color-primary);
+}
+
+.nav--transparent-dark .nav__mobile .nav__mobile-contact a,
+.nav--transparent-dark .nav__mobile .nav__mobile-contact svg,
+.nav--transparent-dark .nav__mobile .nav__mobile-contact .nav__contact-item {
+  color: var(--color-text);
+}
+
+.nav--two-tier.nav--transparent-dark .nav__brand-name,
+.nav--two-tier.nav--transparent-dark .nav__name,
+.nav--two-tier.nav--transparent-dark .nav__tagline,
+.nav--two-tier.nav--transparent-dark .nav__contact-link,
+.nav--two-tier.nav--transparent-dark .nav__contact-item a,
+.nav--two-tier.nav--transparent-dark .nav__contact-item {
+  color: var(--color-text-inverse);
+}
+
+.nav--transparent-light .nav__name,
+.nav--transparent-light .nav__brand-name {
+  color: var(--color-text-heading);
+}
+
+.nav--transparent-light .nav__title,
+.nav--transparent-light .nav__tagline {
+  color: var(--color-text-light);
+}
+
+.nav--transparent-light .nav__link:hover,
+.nav--transparent-light .nav__link--active {
+  color: var(--color-primary);
+}
+
+.nav--transparent-light .btn--primary,
+.nav--transparent-light .nav__cta {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.nav--transparent-light .btn--primary:hover,
+.nav--transparent-light .nav__cta:hover {
+  background-color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+.nav--transparent-light .nav__toggle span,
+.nav--transparent-light .nav__toggle-bar {
+  background-color: var(--color-text-heading);
+}
+
+.nav--branded .btn--primary,
+.nav--branded .nav__cta {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-text-inverse);
+}
+
+.nav--branded .btn--primary:hover,
+.nav--branded .nav__cta:hover {
+  background-color: var(--color-secondary-dark);
+  border-color: var(--color-secondary-dark);
+}
+
+.nav--branded .nav__dropdown-menu .nav__link,
+.nav--branded .nav__dropdown-menu .nav__dropdown-link {
+  color: var(--color-text);
+}
+
+.nav--branded .nav__dropdown-menu .nav__link:hover,
+.nav--branded .nav__dropdown-menu .nav__dropdown-link:hover {
+  color: var(--color-primary);
+}
+
+.nav--branded .nav__mobile .nav__link:hover,
+.nav--branded .nav__mobile .nav__link--active {
+  color: var(--color-primary);
+}
+
+.cta-banner .btn--secondary,
+.section--dark .btn--secondary {
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.cta-banner .btn--secondary:hover,
+.section--dark .btn--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-inverse);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.reveal .grid--2 > *,
+.reveal .grid--3 > *,
+.reveal .grid--4 > *,
+.reveal .grid--bento > *,
+.reveal .steps > *,
+.reveal .testimonial-grid > *,
+.reveal .pricing-grid > *,
+.reveal .team-grid > *,
+.reveal .quals-list > *,
+.reveal .fee-table {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal .split__text,
+.reveal .split__content,
+.reveal .split__image,
+.reveal .split__image-placeholder {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  .reveal .split__text,
+    .reveal .split__content { transform: translateX(-34px); }
+}
+
+@media (min-width: 768px) {
+  .reveal .split__image,
+    .reveal .split__image-placeholder { transform: translateX(34px); }
+}
+
+@media (min-width: 768px) {
+  .reveal .split--reverse .split__text,
+    .reveal .split--reverse .split__content { transform: translateX(34px); }
+}
+
+@media (min-width: 768px) {
+  .reveal .split--reverse .split__image,
+    .reveal .split--reverse .split__image-placeholder { transform: translateX(-34px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal .grid--2 > *,
+    .reveal .grid--3 > *,
+    .reveal .grid--4 > *,
+    .reveal .grid--bento > *,
+    .reveal .steps > *,
+    .reveal .testimonial-grid > *,
+    .reveal .pricing-grid > *,
+    .reveal .team-grid > *,
+    .reveal .quals-list > *,
+    .reveal .checklist-grid > *,
+    .reveal .split__text,
+    .reveal .split__content,
+    .reveal .split__image,
+    .reveal .split__image-placeholder,
+    .reveal .fee-table {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__mobile .nav__link,
+    .nav__mobile .btn {
+      transition: none;
+      opacity: 1;
+      transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__content,
+    .hero__image-wrap {
+      animation: none;
+    }
+}
+
+@media print {
+  .nav,
+    .nav__mobile,
+    .skip-link,
+    .back-to-top,
+    .cookie-banner,
+    .site-credit,
+    .cta-banner,
+    .footer {
+      display: none !important;
+    }
+}
+
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner)
+  + .section:not(.section--alt):not(.section--dark):not(.cta-banner) {
+  background-color: var(--color-bg-alt);
+}
+
+/* === END BACKFILL === */
