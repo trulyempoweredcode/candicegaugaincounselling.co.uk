@@ -491,41 +491,126 @@
         mount.innerHTML = '<p>This appointment has already taken place, so it can no longer be cancelled online.</p>';
         return;
       }
-      if (!b.cancellable) {
-        mount.innerHTML = '<p>Online cancellation isn\'t available within ' + esc(String(b.cutoff_hours)) +
+      if (!b.cancellable && !b.reschedulable) {
+        mount.innerHTML = '<p>Changing or cancelling online isn\'t available within ' + esc(String(b.cutoff_hours)) +
           ' hours of the appointment. Please contact us directly and we\'ll help.</p>';
         return;
       }
 
-      mount.innerHTML =
-        '<div class="booking-summary"><strong>' + esc(b.service_name) + '</strong> — ' + esc(b.start_label) +
-          (b.payment_summary ? '<span class="booking-summary__price">' + esc(b.payment_summary) + '</span>' : '') + '</div>' +
-        (b.will_refund ? '<p>Your payment of <strong>' + esc(formatPence(b.refund_pence)) + '</strong> will be refunded in full.</p>' : '') +
-        '<p>Are you sure you want to cancel this appointment?</p>' +
-        '<button type="button" class="btn btn--primary" data-confirm-cancel>Yes — cancel this appointment</button>' +
-        '<div class="booking-live" aria-live="polite"></div>';
+      renderManage();
 
-      mount.querySelector('[data-confirm-cancel]').addEventListener('click', function () {
-        var btn = mount.querySelector('[data-confirm-cancel]');
-        btn.disabled = true;
-        btn.textContent = 'Cancelling…';
-        api('/api/booking/cancel/' + token, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      /* Summary + the two actions (Change time / Cancel). */
+      function renderManage() {
+        mount.innerHTML =
+          '<div class="booking-summary"><strong>' + esc(b.service_name) + '</strong> — ' + esc(b.start_label) +
+            (b.payment_summary ? '<span class="booking-summary__price">' + esc(b.payment_summary) + '</span>' : '') + '</div>' +
+          '<div class="booking-manage-actions">' +
+            (b.reschedulable ? '<button type="button" class="btn btn--primary" data-reschedule>Change the time</button>' : '') +
+            (b.cancellable ? '<button type="button" class="btn btn--secondary booking-cancel-link" data-cancel>Cancel this appointment</button>' : '') +
+          '</div>' +
+          '<div class="booking-live" aria-live="polite"></div>';
+        var rs = mount.querySelector('[data-reschedule]');
+        if (rs) rs.addEventListener('click', startReschedule);
+        var cn = mount.querySelector('[data-cancel]');
+        if (cn) cn.addEventListener('click', confirmCancel);
+      }
+
+      /* ── Cancel (with a confirm step) ─────────────── */
+      function confirmCancel() {
+        mount.innerHTML =
+          '<div class="booking-summary"><strong>' + esc(b.service_name) + '</strong> — ' + esc(b.start_label) + '</div>' +
+          (b.will_refund ? '<p>Your payment of <strong>' + esc(formatPence(b.refund_pence)) + '</strong> will be refunded in full.</p>' : '') +
+          '<p>Are you sure you want to cancel this appointment?</p>' +
+          '<div class="booking-manage-actions">' +
+            '<button type="button" class="btn btn--primary" data-confirm-cancel>Yes — cancel it</button>' +
+            '<button type="button" class="btn btn--secondary" data-back>Keep my appointment</button>' +
+          '</div><div class="booking-live" aria-live="polite"></div>';
+        mount.querySelector('[data-back]').addEventListener('click', renderManage);
+        mount.querySelector('[data-confirm-cancel]').addEventListener('click', function () {
+          var btn = mount.querySelector('[data-confirm-cancel]');
+          btn.disabled = true;
+          btn.textContent = 'Cancelling…';
+          api('/api/booking/cancel/' + token, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+            .then(function (r2) {
+              if (r2.status === 200 && r2.body.success) {
+                var refunded = r2.body.data && r2.body.data.refunded_pence;
+                mount.innerHTML = '<p><strong>Your appointment has been cancelled.</strong>' +
+                  (refunded ? ' Your payment of ' + esc(formatPence(refunded)) + ' has been refunded — it usually appears back in your account within 5–10 working days.' : '') +
+                  '</p><p>We\'ve emailed you a confirmation. You\'re welcome to rebook any time.</p>';
+              } else {
+                mount.innerHTML = '<p>' + esc((r2.body && r2.body.error) || 'Sorry — we couldn\'t cancel this booking online. Please contact us directly.') + '</p>';
+              }
+            })
+            .catch(function () {
+              btn.disabled = false;
+              btn.textContent = 'Yes — cancel it';
+              mount.querySelector('.booking-live').textContent = 'Connection problem — please try again.';
+            });
+        });
+      }
+
+      /* ── Reschedule: pick a new slot ──────────────── */
+      function startReschedule() {
+        mount.innerHTML = '<div class="booking-loading"><div class="booking-loading__spinner" aria-hidden="true"></div><p>Finding available times…</p></div>';
+        var tz = (b.config && b.config.timezone) || 'Europe/London';
+        var from = todayIso(tz);
+        var to = addDaysIso(from, Math.min(28, (b.config && b.config.max_advance_days) || 28));
+        api('/api/booking/reschedule-slots/' + token + '?from=' + from + '&to=' + to)
           .then(function (r2) {
-            if (r2.status === 200 && r2.body.success) {
-              var refunded = r2.body.data && r2.body.data.refunded_pence;
-              mount.innerHTML = '<p><strong>Your appointment has been cancelled.</strong>' +
-                (refunded ? ' Your payment of ' + esc(formatPence(refunded)) + ' has been refunded — it usually appears back in your account within 5–10 working days.' : '') +
-                '</p><p>We\'ve emailed you a confirmation. You\'re welcome to rebook any time.</p>';
-            } else {
-              mount.innerHTML = '<p>' + esc((r2.body && r2.body.error) || 'Sorry — we couldn\'t cancel this booking online. Please contact us directly.') + '</p>';
+            if (r2.status !== 200 || !r2.body.success) { renderManage(); return; }
+            var days = r2.body.data.days || {};
+            var dates = Object.keys(days).sort();
+            var html = '<button type="button" class="booking-back" data-back>&larr; Back</button>' +
+              '<h2 class="booking-heading">Pick a new time <span class="booking-heading__hint">currently ' + esc(b.start_label) + '</span></h2>';
+            if (!dates.length) {
+              html += '<p class="booking-empty-month">Sorry, there are no available times in the next few weeks. Please contact us directly.</p>';
+              mount.innerHTML = html;
+              mount.querySelector('[data-back]').addEventListener('click', renderManage);
+              return;
             }
+            dates.forEach(function (d) {
+              html += '<div class="booking-resched-day"><h3>' + esc(formatDateLong(d)) + '</h3><div class="booking-slots">';
+              days[d].forEach(function (slot) {
+                html += '<button type="button" class="booking-slot" data-start="' + esc(slot.start_utc) + '" data-local="' + esc(slot.start_local) + '">' + esc(formatTime(slot.start_local)) + '</button>';
+              });
+              html += '</div></div>';
+            });
+            html += '<div class="booking-live" aria-live="polite"></div>';
+            mount.innerHTML = html;
+            mount.querySelector('[data-back]').addEventListener('click', renderManage);
+            mount.querySelectorAll('[data-start]').forEach(function (btn) {
+              btn.addEventListener('click', function () { doReschedule(btn.getAttribute('data-start')); });
+            });
           })
-          .catch(function () {
-            btn.disabled = false;
-            btn.textContent = 'Yes — cancel this appointment';
-            mount.querySelector('.booking-live').textContent = 'Connection problem — please try again.';
-          });
-      });
+          .catch(function () { renderManage(); });
+      }
+
+      function doReschedule(startUtc) {
+        var live = mount.querySelector('.booking-live');
+        if (live) live.textContent = 'Moving your appointment…';
+        mount.querySelectorAll('[data-start]').forEach(function (x) { x.disabled = true; });
+        api('/api/booking/reschedule/' + token, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ start_utc: startUtc })
+        }).then(function (r2) {
+          if (r2.status === 200 && r2.body.success) {
+            mount.innerHTML = '<h2 class="booking-heading">All done</h2>' +
+              '<p><strong>Your appointment has been moved to ' + esc(r2.body.data.start_label) + '.</strong></p>' +
+              '<p>We\'ve emailed you an updated confirmation and calendar invite.</p>';
+          } else if (r2.status === 409) {
+            // Slot taken meanwhile — reload the picker.
+            startReschedule();
+            requestAnimationFrame(function () {
+              var l = mount.querySelector('.booking-live'); if (l) l.textContent = 'Sorry, that time was just taken — please pick another.';
+            });
+          } else {
+            mount.querySelectorAll('[data-start]').forEach(function (x) { x.disabled = false; });
+            if (live) live.textContent = (r2.body && r2.body.error) || 'Sorry — that didn\'t work. Please try again.';
+          }
+        }).catch(function () {
+          mount.querySelectorAll('[data-start]').forEach(function (x) { x.disabled = false; });
+          if (live) live.textContent = 'Connection problem — please try again.';
+        });
+      }
     }).catch(function () {
       mount.innerHTML = '<p>We couldn\'t load this booking right now. Please try again in a few minutes, or contact us directly.</p>';
     });

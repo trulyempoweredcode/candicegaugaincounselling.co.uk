@@ -9618,6 +9618,30 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
   text-align: left;
 }
 
+/* Manage page (cancel.html): action buttons + reschedule day list */
+.booking-manage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin: var(--space-md) 0;
+}
+
+.booking-cancel-link {
+  /* de-emphasise destructive action next to the primary "Change time" */
+  opacity: 0.85;
+}
+
+.booking-resched-day {
+  margin-bottom: var(--space-lg);
+}
+
+.booking-resched-day h3 {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-light);
+  margin: 0 0 var(--space-sm);
+}
+
 /* Static policy + noscript fallbacks */
 .booking-policy {
   max-width: 720px;
