@@ -6713,6 +6713,7 @@ a.card--service:hover .card__link {
   flex-wrap: wrap;
   gap: var(--space-md);
   align-items: center;
+  justify-content: center;
   font-size: var(--text-sm);
   color: var(--color-text-light);
   margin-bottom: var(--space-xl);
