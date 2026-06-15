@@ -8636,6 +8636,32 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
   line-height: var(--line-height-relaxed);
 }
 
+/* ============================================
+   CONTENT LINKS (visible affordance for bare inline links)
+   ============================================ */
+/* base.css resets `a { color: inherit; text-decoration: none }` so nav,
+   buttons and cards (all <a> tags) don't go blue+underlined. The trade-off
+   is that a plain <a> dropped into body prose — by a client edit or the
+   editor AI — inherits the surrounding text colour and has NO underline, so
+   it's indistinguishable from normal text (fails WCAG: no colour AND no
+   underline). This restores the link affordance for genuine inline content
+   links only: bare <a> (no class) inside a paragraph or a classless list
+   item within <main>. Classed links (.btn, .nav__link, .breadcrumbs__item a,
+   card links, .skip-link, etc.) keep their own styling because :not([class])
+   skips them, and nav/footer sit outside <main>. Matches the .link /
+   .blog-post__body a / .privacy-content a convention (primary + underline). */
+main p a:not([class]),
+main li:not([class]) a:not([class]) {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+main p a:not([class]):hover,
+main li:not([class]) a:not([class]):hover {
+  color: var(--color-primary-dark);
+}
+
 /* =============================================
    SHOP (Shop upgrade feature)
    Product cards, price display, product detail layout, option selects,
