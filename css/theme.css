@@ -1496,3 +1496,21 @@
     accent-color: var(--color-primary-dark);
     cursor: pointer;
 }
+
+
+/* === BACKFILL: rules dropped by template update to v1.7.5 ===
+   2 rule(s) preserved automatically because their classes are
+   still referenced in this site's HTML. Move into proper site partials
+   if you want, but do NOT delete unless you've also removed the markup.
+   ===================================================== */
+
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner)
+  + .section:not(.section--alt):not(.section--dark):not(.cta-banner) {
+  background-color: var(--color-bg-alt);
+}
+
+main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
+  background-color: var(--color-bg);
+}
+
+/* === END BACKFILL === */

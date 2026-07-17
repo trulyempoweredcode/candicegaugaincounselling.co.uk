@@ -7564,12 +7564,12 @@ a.card--service:hover .card__link {
    - Two .section--dark in a row → would be unusual, not handled
    ============================================= */
 
-main > .section:not(.section--alt):not(.section--dark):not(.cta-banner)
-  + .section:not(.section--alt):not(.section--dark):not(.cta-banner) {
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner)
+  + .section:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
   background-color: var(--color-bg-alt);
 }
 
-main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
+main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
   background-color: var(--color-bg);
 }
 
