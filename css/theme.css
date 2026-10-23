@@ -1514,3 +1514,30 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner) {
 }
 
 /* === END BACKFILL === */
+
+
+/* === BACKFILL: rules dropped by template update to v1.7.23 ===
+   3 rule(s) preserved automatically because their classes are
+   still referenced in this site's HTML. Move into proper site partials
+   if you want, but do NOT delete unless you've also removed the markup.
+   ===================================================== */
+
+.split__text .btn {
+  margin-top: var(--space-lg);
+}
+
+.content a:not(.btn) {
+  text-decoration: none;
+  background-image: linear-gradient(var(--color-primary), var(--color-primary));
+  background-size: 0% 2px;
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  transition: background-size var(--transition-base);
+  padding-bottom: 1px;
+}
+
+.content a:not(.btn):hover {
+  background-size: 100% 2px;
+}
+
+/* === END BACKFILL === */

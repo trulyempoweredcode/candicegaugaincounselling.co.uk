@@ -71,17 +71,17 @@
 
 .nav__name {
   font-family: var(--font-heading);
-  font-size: var(--text-lg);
+  font-size: var(--nav-name-size, var(--text-lg));
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-heading);
+  color: var(--nav-name-color, var(--color-text-heading));
   line-height: 1.2;
 }
 
 .nav__title {
-  font-size: var(--text-xs);
+  font-size: var(--nav-title-size, var(--text-xs));
   color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  text-transform: var(--nav-title-transform, uppercase);
+  letter-spacing: var(--nav-title-tracking, 0.08em);
 }
 
 .nav__links {
@@ -435,7 +435,7 @@
   background-color: var(--color-surface);
   border-bottom: 1px solid var(--color-border-light);
   transition: box-shadow var(--transition-base);
-  padding: 20px 0;
+  padding: var(--nav-two-tier-padding, 20px) 0; /* v1.7.20 hook */
 }
 
 .nav--two-tier.nav--scrolled {
@@ -447,7 +447,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 20px;
+  padding-top: var(--nav-top-padding, 20px); /* v1.7.20 hook */
   padding-bottom: var(--space-sm);
 }
 
@@ -531,6 +531,19 @@
     border-top: 1px solid var(--color-border-light);
     padding-top: var(--space-sm);
     padding-bottom: var(--space-sm);
+  }
+}
+
+/* v1.7.15 - below 1100px the bottom bar holds only the menu button, pinned
+   24px from the top. A brand that wraps to two lines (canonburyclinic.co.uk)
+   left the button level with the top of the name instead of beside it.
+   Stretch the bar over the header's height and centre the button in it. */
+@media (max-width: 1099px) {
+  .nav--two-tier .nav__bottom {
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
   }
 }
 
@@ -660,6 +673,22 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   line-height: 1.2;
+}
+
+/* v1.7.15 - on a phone the bar is 56px tall and the brand gets ~200px, so a
+   long practice name was cut to "Canonb..." with the tagline squeezed into
+   three 11px lines beside it (canonburyclinic.co.uk). Drop the tagline and
+   let the name use two lines instead. */
+@media (max-width: 479px) {
+  .nav-scroll__title {
+    display: none;
+  }
+  .nav-scroll__name {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
 }
 
 .nav-scroll__right {
@@ -839,7 +868,7 @@ body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nt
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-md);
-  justify-content: center;
+  justify-content: var(--hero-actions-justify, center);
 }
 
 @media (min-width: 768px) {
@@ -1453,6 +1482,9 @@ body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nt
 
 .hero--image .hero__label {
   color: var(--color-secondary-light);
+  /* v1.7.15 - the heading carries a shadow, the label did not, and a small
+     gold line over a busy photograph was hard to read (canonburyclinic.co.uk). */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 14px rgba(0, 0, 0, 0.45);
 }
 
 .hero--image .hero__heading {
@@ -2607,6 +2639,14 @@ a.card--service:hover .card__link {
   padding: var(--space-2xl);
 }
 
+/* v1.7.12 - at phone width 48px of card padding left a 229px field inside a 327px card and the
+   enquiry dropdown truncated its own selected value (Elspeth Campbell review, 2026-09-17). */
+@media (max-width: 767px) {
+  .contact-form-card {
+    padding: var(--space-lg);
+  }
+}
+
 .contact-form-card h2 {
   font-size: var(--text-xl);
   margin-bottom: var(--space-sm);
@@ -2635,6 +2675,9 @@ a.card--service:hover .card__link {
 .form__group--checkbox input[type="checkbox"] {
   margin-top: 4px;
   flex-shrink: 0;
+  width: var(--form-check-size, auto); /* v1.7.20 hooks: a bigger tap target */
+  height: var(--form-check-size, auto);
+  accent-color: var(--form-check-accent, auto);
 }
 
 .form__group--checkbox label {
@@ -2930,6 +2973,13 @@ a.card--service:hover .card__link {
   column-gap: var(--space-lg);
   row-gap: var(--space-xs);
   align-items: start;
+  /* v1.7.7 — align-CONTENT, not just align-items. The card is stretched by the
+     parent grid to match its tallest sibling, and without this the surplus
+     height inflates the heading ROW rather than sitting below the content, so
+     a short card shows an ~80px hole between its h3 and its body text. Only
+     visible when items in a row have uneven text lengths, which is why the
+     even-length theme-preview demo never showed it. */
+  align-content: start;
   padding: var(--space-lg);
   background-color: var(--color-surface);
   border-radius: var(--radius-lg);
@@ -3029,6 +3079,21 @@ a.card--service:hover .card__link {
   margin-bottom: var(--space-md);
 }
 
+/* v1.7.15 - .service-detail h2 is --text-xl (26px), but a bare h3 uses
+   --text-h3 (26px on a phone, 28px on desktop), so FAQ questions under an h2
+   in a post or service write-up were as big as, or bigger than, the heading
+   above them (canonburyclinic.co.uk posts at 375px). Always a step smaller,
+   and never larger than the site's own h3 size. */
+.service-detail h3 {
+  font-size: min(var(--text-lg), var(--text-h3));
+}
+
+@media (min-width: 768px) {
+  .service-detail h3 {
+    font-size: min(var(--text-lg), var(--text-h3-desktop));
+  }
+}
+
 .service-detail p {
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
@@ -3049,7 +3114,10 @@ a.card--service:hover .card__link {
   position: relative;
   padding-left: var(--space-xl);
   margin-bottom: var(--space-sm);
-  font-size: var(--text-sm);
+  /* v1.7.13 - inherit, not --text-sm. A post or service write-up puts a list
+     straight after paragraphs, and at --text-sm the bullets read 16px against
+     19px prose (canonburyclinic.co.uk blog posts, 2026-10-01). */
+  font-size: inherit;
   color: var(--color-text-light);
   line-height: var(--line-height-normal);
 }
@@ -3058,7 +3126,8 @@ a.card--service:hover .card__link {
   content: '';
   position: absolute;
   left: 0;
-  top: 7px;
+  /* Centred on the first line at any font size (was a fixed 7px). */
+  top: calc(var(--line-height-normal) * 0.5em - 4px);
   width: 8px;
   height: 8px;
   border-radius: var(--radius-full);
@@ -3353,7 +3422,7 @@ a.card--service:hover .card__link {
    PAGE HEADER (inner pages)
    ============================================= */
 .page-header {
-  padding: 96px 0;
+  padding: var(--page-header-padding, 96px) 0; /* v1.7.20 hook: a site can tighten title bands on phones */
   background-color: var(--color-bg-alt);
   text-align: center;
 }
@@ -3371,7 +3440,7 @@ a.card--service:hover .card__link {
 
 @media (min-width: 768px) {
   .page-header {
-    padding: var(--space-3xl) 0;
+    padding: var(--page-header-padding-desktop, var(--space-3xl)) 0;
   }
 }
 
@@ -3393,14 +3462,36 @@ a.card--service:hover .card__link {
   color: var(--color-secondary-light);
 }
 
+/* Breadcrumbs on a dark page-header.
+   TWO NAMING CONVENTIONS ON PURPOSE - do not "tidy" either set away.
+   PLURAL (.breadcrumbs__item / __separator / __item--active) is the real one:
+   it is what blog-post.html, theme-preview.html and 44 client pages actually
+   emit, and it is the set with base styling further down this file. Only the
+   SINGULAR names (.breadcrumb__link / __current / __separator) were listed here
+   originally, so they matched nothing and a dark header left the breadcrumbs in
+   their default dark-on-dark colours, i.e. invisible. The singular selectors are
+   retained purely so any hand-written markup using them keeps working.
+   The anchor is overridden explicitly: .breadcrumbs__item a sets its own colour,
+   so colouring only the parent item would never reach the link. */
+.page-header--dark .breadcrumbs__item,
 .page-header--dark .breadcrumb__link {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.page-header--dark .breadcrumbs__item a {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.page-header--dark .breadcrumbs__item a:hover {
+  color: var(--color-text-inverse);
+}
+
+.page-header--dark .breadcrumbs__item--active,
 .page-header--dark .breadcrumb__current {
   color: var(--color-text-inverse);
 }
 
+.page-header--dark .breadcrumbs__separator,
 .page-header--dark .breadcrumb__separator {
   color: rgba(255, 255, 255, 0.4);
 }
@@ -3459,15 +3550,38 @@ a.card--service:hover .card__link {
 .page-header--dark .page-header__meta {
   color: rgba(255, 255, 255, 0.75);
 }
+/* v1.7.12 - button row under a page-header. A page-header used as a mid-page
+   image band (Elspeth Campbell, 2026-09-17) had its button sitting flush on the
+   paragraph because .page-header p carries margin: 0 auto. One slot owns the gap. */
+.page-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  justify-content: center;
+  margin-top: var(--space-lg);
+}
 
+/* Breadcrumbs on an image page-header. Same two-convention story as
+   .page-header--dark above - see the comment there before editing. */
+.page-header--image .breadcrumbs__item,
 .page-header--image .breadcrumb__link {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.page-header--image .breadcrumbs__item a {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.page-header--image .breadcrumbs__item a:hover {
+  color: var(--color-text-inverse);
+}
+
+.page-header--image .breadcrumbs__item--active,
 .page-header--image .breadcrumb__current {
   color: var(--color-text-inverse);
 }
 
+.page-header--image .breadcrumbs__separator,
 .page-header--image .breadcrumb__separator {
   color: rgba(255, 255, 255, 0.4);
 }
@@ -3561,7 +3675,8 @@ a.card--service:hover .card__link {
 
 .footer__legal {
   display: flex;
-  gap: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-lg);
   justify-content: center;
 }
 
@@ -3612,14 +3727,15 @@ a.card--service:hover .card__link {
   line-height: var(--line-height-relaxed);
 }
 
-.split__text .btn {
+.split__text .btn,
+.split__content .btn {
   margin-top: var(--space-lg);
 }
 
 .split__text .signature {
-  font-family: var(--font-heading);
-  font-size: var(--text-xl);
-  font-style: italic;
+  font-family: var(--font-signature, var(--font-heading));
+  font-size: var(--signature-size, var(--text-xl));
+  font-style: var(--signature-style, italic);
   color: var(--color-text-heading);
   margin-top: var(--space-lg);
 }
@@ -3663,7 +3779,8 @@ a.card--service:hover .card__link {
     gap: var(--space-3xl);
   }
 
-  .split--reverse .split__text {
+  .split--reverse .split__text,
+  .split--reverse .split__content {
     order: 2;
   }
 
@@ -3725,6 +3842,15 @@ a.card--service:hover .card__link {
   margin: 0;
 }
 
+/* v1.7.15 - a bleed column touches the viewport edge, and the reveal starts
+   it 34px further out (translateX), so every bleed split with a column on the
+   right gave the whole page a 34px sideways scroll until it animated in
+   (canonburyclinic.co.uk about and laser-therapy pages). Clip the band, never
+   html or body. */
+.section:has(.split--bleed) {
+  overflow-x: clip;
+}
+
 @media (min-width: 768px) {
   .split--bleed {
     grid-template-columns: 1fr 1fr;
@@ -3751,6 +3877,46 @@ a.card--service:hover .card__link {
 
   .split--bleed-reverse > * {
     direction: ltr;
+  }
+}
+
+/* v1.7.16 - a bleed photo kept a fixed 4:3 box, so beside text taller than it
+   (three paragraphs at 1280px) it floated mid-band with up to ~400px of empty
+   half-band above and below (canonburyclinic.co.uk laser-therapy and about).
+   The photo now fills the band's full height. min-height keeps the old 4:3
+   height of a half-width column, so a band with short text looks as before.
+   Covers both markups in the fleet: img as a direct child, or inside
+   .split__image-wrap. */
+@media (min-width: 768px) {
+  .split--bleed {
+    align-items: stretch;
+  }
+
+  .split--bleed > .split__content {
+    align-self: center;
+  }
+
+  .split--bleed > .split__image,
+  .split--bleed > .split__image-wrap {
+    min-height: min(37.5vw, 80vh);
+  }
+
+  .split--bleed > .split__image {
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .split--bleed > .split__image-wrap {
+    position: relative;
+  }
+
+  .split--bleed > .split__image-wrap > .split__image {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    max-height: none;
+    aspect-ratio: auto;
   }
 }
 
@@ -3948,10 +4114,13 @@ a.card--service:hover .card__link {
   flex: 1;
 }
 
+/* --text-base, matching .card__text, so all secondary prose sits at one size.
+   At --text-sm this dropped 19px body copy to 16px inside a callout that often
+   sits directly under body copy, which reads as an inconsistent type scale. */
 .highlight-box__content p {
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   margin: 0 0 var(--space-md);
 }
 
@@ -4058,12 +4227,29 @@ a.card--service:hover .card__link {
   gap: var(--space-sm);
 }
 
+/* v1.7.7 — a checklist followed by more content collided with it (0px where
+   the normal paragraph gap is 16px), because the list carries no bottom
+   margin. Two exclusions, both load-bearing:
+     :not(:last-child)          — a checklist that ENDS its container keeps
+                                  margin 0, so no existing layout shifts.
+     :not(.checklist-grid) >    — inside .checklist-grid the lists are siblings
+                                  spaced by the grid's own `gap`; adding a
+                                  margin there double-spaces and grew the grid
+                                  by 16px (measured 290 -> 306 in
+                                  theme-preview). The first, unscoped version of
+                                  this rule DID regress it. */
+:not(.checklist-grid) > .checklist:not(:last-child) {
+  margin-bottom: var(--space-md);
+}
+
 /* Checklist items that use inline SVG instead of ::before — constrain SVG size */
 .checklist > li {
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  font-size: var(--text-base);
+  /* v1.7.15 - inherit, not --text-base: a checklist follows a paragraph and
+     read 17px against 19px (canonburyclinic.co.uk laser-therapy.html). */
+  font-size: inherit;
   color: var(--color-text);
   line-height: var(--line-height-normal);
 }
@@ -4081,7 +4267,7 @@ a.card--service:hover .card__link {
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  font-size: var(--text-base);
+  font-size: inherit;
   color: var(--color-text);
   line-height: var(--line-height-normal);
 }
@@ -4111,6 +4297,32 @@ a.card--service:hover .card__link {
   background-color: transparent;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235B7B6F' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
   background-size: 18px;
+}
+
+/* Numbered variant (v1.7.22, 2026-10-22): the same list with 1, 2, 3 in the
+   circle where the tick sits, for steps or anything in order. Markup:
+   ol.checklist.checklist--numbered > li.checklist__item (never type the
+   numbers). The circle is larger than the tick's so the number is 16px. */
+.checklist--numbered {
+  counter-reset: checklist-number;
+}
+
+.checklist--numbered .checklist__item {
+  counter-increment: checklist-number;
+}
+
+.checklist--numbered .checklist__item::before {
+  content: counter(checklist-number);
+  width: 26px;
+  height: 26px;
+  margin-top: 0;
+  background-image: none;
+  color: var(--color-text-inverse);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 26px;
+  text-align: center;
 }
 
 /* =============================================
@@ -4920,6 +5132,14 @@ a.card--service:hover .card__link {
   grid-template-columns: 1fr;
   gap: var(--space-lg);
   text-align: center;
+  /* Self-centering safety net: the band spans full width, the items stay
+     centred to the content width even if the author forgets `.container`
+     on this element. Redundant (harmless) when `.container` is present. */
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
 }
 
 .info-band__item {
@@ -4948,8 +5168,11 @@ a.card--service:hover .card__link {
 
 .info-band__title {
   font-family: var(--font-heading);
-  font-size: var(--text-md);
+  font-size: var(--text-lg);
   font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+  display: block;
+  margin-bottom: 2px;
 }
 
 .info-band__text {
@@ -4959,8 +5182,19 @@ a.card--service:hover .card__link {
 }
 
 /* Primary colour variant */
+/* The gradient's light stop is tokenised so a site can tune the band without
+   forking this file. Default is unchanged, so existing sites are unaffected. */
 .info-band--primary {
-  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, var(--info-band-from, var(--color-primary-dark)) 0%, var(--color-primary) 100%);
+}
+
+/* A lighter gradient stop pushes both the inverse-cream title (~4.3:1) and the
+   muted 70%-white sub-line (~3.1:1) below AA on a mid-tone clay. Pure white on
+   the primary variant clears 4.5:1 at both gradient stops without relying on a
+   borderline "large text" exemption; hierarchy still comes from size + typeface. */
+.info-band--primary,
+.info-band--primary .info-band__text {
+  color: var(--info-band-text, #FFFFFF);
 }
 
 .info-band--primary .info-band__icon {
@@ -5615,6 +5849,14 @@ a.card--service:hover .card__link {
   gap: var(--space-xl);
 }
 
+/* Each list fills its column (the base .accordion centres itself with
+   auto margins, which in a grid shrinks it to its longest question). */
+.accordion-grid .accordion {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
 @media (min-width: 768px) {
   .accordion-grid {
     grid-template-columns: 1fr 1fr;
@@ -6102,6 +6344,19 @@ a.card--service:hover .card__link {
 .divider--primary svg path,
 .divider--primary svg polygon {
   fill: var(--color-primary);
+}
+
+/* Line variant (v1.7.22, 2026-10-22): a thin rule between two parts of the
+   text in one column, where .divider alone (a wave or other shape between
+   bands, drawn by its SVG) would draw nothing. It takes the colour of the
+   text around it, faintly, so it reads on a white section and on a colour
+   band. Markup: div.divider.divider--line (no SVG inside). */
+.divider--line {
+  height: 0;
+  margin: var(--space-xl) 0;
+  overflow: visible;
+  border-top: 1px solid currentColor;
+  opacity: 0.25;
 }
 
 /* --- Video Embed --- */
@@ -6894,6 +7149,41 @@ a.card--service:hover .card__link {
   transform: translateY(-2px);
 }
 
+/* v1.7.15 - cards in a row are the same height (grid stretch), but the body
+   was not, so "Read more" sat wherever the excerpt ended and drifted between
+   neighbours. Column flex pins it to the bottom of every card. */
+.blog-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-card__link {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* v1.7.15 - a lone card on the last row sits in the middle, not hard left
+   with two empty slots beside it (10 posts in a 3-column grid). */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .blog-grid > .blog-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc((100% - var(--space-xl)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .blog-grid > .blog-card:last-child:nth-child(3n+1) {
+    grid-column: 2;
+  }
+}
+
 .blog-card__image {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -6965,6 +7255,68 @@ a.card--service:hover .card__link {
 .blog-card__link svg {
   width: 16px;
   height: 16px;
+}
+
+/* v1.7.14 - category label on a blog card, above the date. Until now the
+   listing emitted this span with no CSS behind it, so it read as a line of
+   plain body text (canonburyclinic.co.uk, 2026-10-01). */
+.blog-card__category {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+/* v1.7.14 - category filter pills above the blog grid, emitted by the listing
+   generator once a site has 2+ categories. A sibling of .blog-grid, never a
+   child: inside the grid it took the first card slot. Same look as
+   .shop-filter, separate classes so a change to one cannot break the other. */
+.blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.blog-filter {
+  padding: var(--space-xs) var(--space-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--aesthetic-radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.blog-filter:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.blog-filter--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+/* :hover (0,2,0) outranks --active (0,1,0); keep the active pill readable. */
+.blog-filter--active:hover {
+  color: var(--color-text-inverse);
+}
+
+/* v1.7.14 - the listing's empty state. It sits inside .blog-grid, so it spans
+   every column rather than squeezing into the first card slot. */
+.blog-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--color-text-light);
+  padding: var(--space-2xl) 0;
 }
 
 /* =============================================
@@ -7204,6 +7556,18 @@ a.card--service:hover .card__link {
   transform: none;
 }
 
+/* v1.7.17 - the reversed-split slide (.reveal .split--reverse .split__content,
+   0,3,0) out-ranks the reset above (0,2,0), so on a photo-left band the 34px
+   offset never cleared: text pushed past the right edge and a gap beside the
+   photo, on every desktop visit (canonburyclinic.co.uk laser-therapy). Same
+   weight, later in the file, so it wins. */
+.reveal--visible .split--reverse .split__text,
+.reveal--visible .split--reverse .split__content,
+.reveal--visible .split--reverse .split__image,
+.reveal--visible .split--reverse .split__image-placeholder {
+  transform: none;
+}
+
 /* Checklist grid cascade — same staggered fade-up as the other grids/lists */
 .reveal .checklist-grid > * {
   opacity: 0;
@@ -7260,6 +7624,14 @@ a.card--service:hover .card__link {
 /* =============================================
    CARD HOVER LIFTS
    Subtle lift effect on interactive cards.
+
+   .team-card intentionally has NO base rule and must not be given one. It is a
+   hover-intensity hook, not a standalone component: it is always written
+   alongside .card (see creativewellness.co.uk/about.html, which uses
+   "card card--image-top card--portrait team-card"), so .card supplies the base
+   styling and .card:hover the default -2px lift, and this rule upgrades that
+   lift to -4px. The real standalone team component is .team-member.
+   Do not delete it as an orphan either - a live client site depends on it.
    ============================================= */
 .card--service:hover,
 .icon-box--card:hover,
@@ -7324,23 +7696,15 @@ a.card--service:hover .card__link {
   box-shadow: none;
 }
 
-/* =============================================
-   SMOOTH LINK UNDERLINE ANIMATION
-   Animated underline grows from left on hover.
-   ============================================= */
-.content a:not(.btn) {
-  text-decoration: none;
-  background-image: linear-gradient(var(--color-primary), var(--color-primary));
-  background-size: 0% 2px;
-  background-position: left bottom;
-  background-repeat: no-repeat;
-  transition: background-size var(--transition-base);
-  padding-bottom: 1px;
-}
-
-.content a:not(.btn):hover {
-  background-size: 100% 2px;
-}
+/* SMOOTH LINK UNDERLINE ANIMATION - REMOVED in v1.7.10.
+   It was scoped to `.content`, and no element in master or across the fleet has
+   ever carried that class: a sweep of every shipped page in master-site-template
+   and all client sites found zero exact `content` class tokens. (Beware the false
+   positive - a substring search matches `privacy-content` and `cookies-content`
+   and reports ~74 pages.) So the rule could never fire. Prose links are handled
+   by the `main p a` / `main li a` rule instead - see the "Inline content links"
+   entry in COMPONENTS.md. If an animated underline is ever wanted, add it there
+   rather than reviving a class nothing applies. */
 
 /* =============================================
    PRINT STYLES
@@ -8635,6 +8999,22 @@ main > .section--alt + .section--alt:not(.section--dark):not(.cta-banner):not(.c
   color: var(--color-text-light);
   line-height: var(--line-height-relaxed);
 }
+/* v1.7.13 - .service-detail draws its own dot with ::before, but the rules
+   above out-rank .service-detail ul (0,2,1 vs 0,1,1), so a plain list in a
+   .service-detail column got the browser's disc beside that dot: a double
+   bullet in every post body (canonburyclinic.co.uk, 2026-10-01). Hand those
+   lists back to the component. Added as an override rather than by narrowing
+   the selectors above, because a selector that disappears from this file is
+   copied into each site's theme.css by the update's orphan-CSS migration,
+   which would bring the double bullet straight back. */
+.section .service-detail ul:not([class]) {
+  list-style: none;
+  padding-left: 0;
+}
+.section .service-detail ul:not([class]) li {
+  margin-bottom: var(--space-sm);
+  line-height: var(--line-height-normal);
+}
 
 /* ============================================
    CONTENT LINKS (visible affordance for bare inline links)
@@ -9687,4 +10067,996 @@ main li:not([class]) a:not([class]):hover {
   .booking-cal {
     padding: var(--space-xl);
   }
+}
+
+/* =====================================================================
+   SIGNATURE COMPONENTS (added 2026-10-07)
+   Seven patterns the originals we are asked to match use and the library
+   lacked: day schedule, warm stat strip, video testimonial carousel, press
+   bar, arched image with proof badge, numbered service list, editorial blog
+   cards. Additive only: no existing selector is changed. Tokens only, so every
+   palette and aesthetic dial applies. Documented in COMPONENTS.md
+   ("Signature components") with a demo block in theme-preview.html.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   DAY SCHEDULE - hour-by-hour cards ("a day at the retreat", "a class day").
+   <ol class="day-schedule"><li class="day-schedule__item">
+     <span class="day-schedule__time">07:00</span>
+     <div class="day-schedule__card"><h3 class="day-schedule__title">..</h3>
+     <p class="day-schedule__text">..</p></div></li>...</ol>
+   Default is a vertical rail (time left, card right). --grid turns it into a
+   grid of cards with the time as a chip on top.
+   --------------------------------------------------------------------- */
+.day-schedule {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-md);
+  position: relative;
+}
+
+.day-schedule::before {
+  content: "";
+  position: absolute;
+  top: var(--space-md);
+  bottom: var(--space-md);
+  left: calc(3.5rem + var(--space-sm) / 2);
+  width: 1px;
+  background: var(--color-border);
+}
+
+.day-schedule__item {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: var(--space-sm);
+  align-items: start;
+  position: relative;
+}
+
+.day-schedule__item::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--space-md) + 0.45em);
+  left: calc(3.5rem + var(--space-sm) / 2 - 4px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-bg);
+}
+
+.day-schedule__time {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-primary);
+  padding-top: var(--space-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.day-schedule__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--aesthetic-radius, var(--radius-lg));
+  box-shadow: var(--aesthetic-shadow-card, var(--shadow-sm));
+  padding: var(--space-md);
+}
+
+.day-schedule__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-heading);
+  line-height: var(--line-height-tight);
+  margin: 0 0 var(--space-xs);
+}
+
+.day-schedule__text {
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}
+
+/* grid of cards, time as a chip on top */
+.day-schedule--grid::before,
+.day-schedule--grid .day-schedule__item::before {
+  display: none;
+}
+
+.day-schedule--grid .day-schedule__item {
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  align-items: stretch;
+  gap: 0;
+}
+
+.day-schedule--grid .day-schedule__time {
+  justify-self: start;
+  padding: var(--space-xs) var(--space-md);
+  margin-bottom: calc(var(--space-sm) * -1);
+  position: relative;
+  z-index: 1;
+  margin-left: var(--space-md);
+  font-size: var(--text-sm);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-full);
+}
+
+.day-schedule--grid .day-schedule__card {
+  padding-top: calc(var(--space-md) + var(--space-sm));
+}
+
+@media (min-width: 768px) {
+  .day-schedule__item {
+    grid-template-columns: 5.5rem 1fr;
+    gap: var(--space-lg);
+  }
+  .day-schedule::before {
+    left: calc(5.5rem + var(--space-lg) / 2);
+  }
+  .day-schedule__item::before {
+    left: calc(5.5rem + var(--space-lg) / 2 - 4px);
+  }
+  .day-schedule__card {
+    padding: var(--space-lg) var(--space-xl);
+  }
+  .day-schedule__time {
+    padding-top: var(--space-lg);
+    font-size: var(--text-xl);
+  }
+  .day-schedule__item::before {
+    top: calc(var(--space-lg) + 0.55em);
+  }
+  .day-schedule--grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+  .day-schedule--grid .day-schedule__item {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .day-schedule--grid .day-schedule__time {
+    padding-top: var(--space-xs);
+    font-size: var(--text-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  .day-schedule--grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   STAT STRIP, WARM - a quiet tinted strip of big numbers with hairline
+   dividers. Use on .stats: <div class="stats stats--warm"> with .stat
+   children (the counter animation and __sub work as usual).
+   --------------------------------------------------------------------- */
+.stats--warm {
+  gap: 1px;
+  background: var(--color-border-light);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--aesthetic-radius, var(--radius-lg));
+  overflow: hidden;
+}
+
+.stats--warm .stat {
+  background: var(--color-bg-alt);
+  padding: var(--space-xl) var(--space-md);
+}
+
+.stats--warm .stat:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.stats--warm .stat__number {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-accent);
+  line-height: 1;
+  margin-bottom: var(--space-sm);
+}
+
+.stats--warm .stat__label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-text);
+}
+
+.stats--warm .stat__sub {
+  margin-top: var(--space-xs);
+}
+
+@media (min-width: 768px) {
+  .stats--warm {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  .stats--warm .stat:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+  .stats--warm .stat {
+    padding: var(--space-2xl) var(--space-md);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   VIDEO TESTIMONIAL CAROUSEL - a swipeable row of portrait video cards.
+   No script: native scroll-snap, native <video controls>.
+   <div class="video-carousel" role="region" aria-label="Video testimonials">
+     <figure class="video-carousel__item">
+       <div class="video-carousel__media"><video controls preload="none"
+            poster="images/t1.jpg"><source src="videos/t1.mp4"></video></div>
+       <blockquote class="video-carousel__quote">..</blockquote>
+       <figcaption><span class="video-carousel__name">..</span>
+                   <span class="video-carousel__role">..</span></figcaption>
+     </figure>...</div>
+   A poster that links out instead of playing inline: put an <a> with an <img>
+   and <span class="video-carousel__play"></span> inside __media.
+   --------------------------------------------------------------------- */
+.video-carousel {
+  display: flex;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--space-xs) 0 var(--space-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.video-carousel__item {
+  flex: 0 0 78%;
+  scroll-snap-align: start;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.video-carousel__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--aesthetic-radius, var(--radius-lg));
+  background: var(--color-bg-dark);
+}
+
+.video-carousel__media video,
+.video-carousel__media img,
+.video-carousel__media iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+}
+
+.video-carousel__media a {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.video-carousel__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 64px;
+  height: 64px;
+  margin: -32px 0 0 -32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  transition: transform var(--transition-base);
+}
+
+.video-carousel__play::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -9px 0 0 -6px;
+  border-style: solid;
+  border-width: 9px 0 9px 16px;
+  border-color: transparent transparent transparent var(--color-primary);
+}
+
+.video-carousel__media a:hover .video-carousel__play {
+  transform: scale(1.08);
+}
+
+.video-carousel__quote {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-style: italic;
+  line-height: var(--line-height-tight);
+  color: var(--color-text-heading);
+}
+
+.video-carousel__name {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+}
+
+.video-carousel__role {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-light);
+}
+
+@media (min-width: 768px) {
+  .video-carousel__item {
+    flex-basis: calc((100% - var(--space-lg)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-carousel__item {
+    flex-basis: calc((100% - 2 * var(--space-lg)) / 3);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   PRESS BAR - "As featured in" strip with an optional one-line quote per
+   outlet. Sits directly under the hero. Outlet is text or a logo <img>.
+   <div class="press-bar"><div class="container">
+     <p class="press-bar__label">As featured in</p>
+     <ul class="press-bar__list"><li class="press-bar__item">
+       <span class="press-bar__outlet">Vogue</span>
+       <q class="press-bar__quote">..</q></li>...</ul></div></div>
+   Only outlets the client has actually been featured in (Content Integrity).
+   --------------------------------------------------------------------- */
+.press-bar {
+  background: var(--color-bg);
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
+  padding: var(--space-lg) 0;
+}
+
+.press-bar__label {
+  margin: 0 0 var(--space-md);
+  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-text-light);
+}
+
+.press-bar__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md) var(--space-lg);
+}
+
+.press-bar__item {
+  text-align: center;
+}
+
+/* An odd last outlet takes the whole row on phones, centred, not alone on the left. */
+.press-bar__item:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.press-bar__outlet {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  color: var(--color-text-heading);
+  opacity: 0.85;
+}
+
+.press-bar__outlet img {
+  display: inline-block;
+  max-height: 28px;
+  width: auto;
+  filter: grayscale(1);
+  opacity: 0.75;
+}
+
+.press-bar__quote {
+  display: block;
+  quotes: none;
+  margin-top: var(--space-xs);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: var(--line-height-tight);
+  color: var(--color-text-light);
+}
+
+@media (min-width: 768px) {
+  .press-bar {
+    padding: var(--space-xl) 0;
+  }
+  .press-bar__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-lg) var(--space-3xl);
+  }
+  .press-bar__item {
+    max-width: 14rem;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   ARCH MEDIA - a photo cropped to an arch, with a floating proof badge
+   (rating, years, number of clients). Use in a two-column band beside text.
+   <div class="arch-media"><div class="arch-media__img"><img ...></div>
+     <div class="arch-media__badge"><span class="arch-media__badge-value">4.9</span>
+     <span class="arch-media__badge-label">120 five-star reviews</span></div></div>
+   --right moves the badge to the right edge. The badge must state a fact the
+   client has supplied (Content Integrity), never an invented rating.
+   --------------------------------------------------------------------- */
+.arch-media {
+  position: relative;
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+}
+
+.arch-media__img {
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+  background: var(--color-bg-alt);
+}
+
+.arch-media__img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.arch-media__badge {
+  position: absolute;
+  left: var(--space-sm);
+  bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 8.5rem;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--aesthetic-radius, var(--radius-lg));
+  box-shadow: var(--shadow-lg);
+}
+
+.arch-media__badge-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.arch-media__badge-label {
+  font-size: var(--text-xs);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-light);
+}
+
+.arch-media--right .arch-media__badge {
+  left: auto;
+  right: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .arch-media__badge {
+    left: calc(var(--space-xl) * -1);
+  }
+  .arch-media--right .arch-media__badge {
+    left: auto;
+    right: calc(var(--space-xl) * -1);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   SERVICE LIST, NUMBERED - hairline-divided rows: number, title + line,
+   arrow. Replaces a grid of identical icon cards when the offer is a list.
+   <ol class="service-list service-list--numbered"><li class="service-list__item">
+     <a class="service-list__link" href="..">
+       <div class="service-list__body"><h3 class="service-list__title">..</h3>
+       <p class="service-list__text">..</p></div>
+       <span class="service-list__arrow" aria-hidden="true">&rarr;</span></a></li>
+   The number is generated by CSS (01, 02 ...), never typed. Without
+   --numbered it is the same list with no numbers.
+   --------------------------------------------------------------------- */
+.service-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: service;
+  border-top: 1px solid var(--color-border);
+}
+
+.service-list__item {
+  counter-increment: service;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.service-list__link {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-sm);
+  align-items: center;
+  padding: var(--space-lg) 0;
+  color: inherit;
+  text-decoration: none;
+  transition: padding var(--transition-base), background-color var(--transition-base);
+}
+
+.service-list--numbered .service-list__link {
+  grid-template-columns: auto 1fr auto;
+}
+
+.service-list--numbered .service-list__link::before {
+  content: counter(service, decimal-leading-zero);
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  line-height: 1;
+  color: var(--color-accent);
+  min-width: 2.25ch;
+  font-variant-numeric: tabular-nums;
+}
+
+.service-list__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-heading);
+  margin: 0 0 var(--space-xs);
+}
+
+.service-list__text {
+  font-size: var(--text-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-light);
+  margin: 0;
+  max-width: 46rem;
+}
+
+.service-list__arrow {
+  font-size: var(--text-xl);
+  color: var(--color-primary);
+  transition: transform var(--transition-base);
+}
+
+a.service-list__link:hover {
+  padding-left: var(--space-sm);
+}
+
+a.service-list__link:hover .service-list__arrow {
+  transform: translateX(6px);
+}
+
+a.service-list__link:hover .service-list__title {
+  color: var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .service-list__link {
+    gap: var(--space-xl);
+    padding: var(--space-xl) 0;
+  }
+  .service-list__title {
+    font-size: var(--text-h3-desktop);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   EDITORIAL BLOG CARDS - magazine style: no card chrome, a category and
+   read-time meta row, a larger headline, hairline spacing. Opt in with
+   .blog-grid--editorial on the grid and .blog-card--editorial on each card.
+   .blog-card--feature on the FIRST card makes it a wide image-left lead
+   story on desktop. New slots: __meta (flex row) and __read-time.
+   <article class="blog-card blog-card--editorial">
+     <div class="blog-card__image"><img ...></div>
+     <div class="blog-card__body">
+       <div class="blog-card__meta"><span class="blog-card__category">..</span>
+         <span class="blog-card__read-time">6 min read</span></div>
+       <h3 class="blog-card__title"><a href="..">..</a></h3>
+       <p class="blog-card__excerpt">..</p>
+       <a class="blog-card__link" href="..">Read more</a></div></article>
+   --------------------------------------------------------------------- */
+.blog-grid--editorial {
+  gap: var(--space-2xl) var(--space-xl);
+}
+
+.blog-card--editorial {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.blog-card--editorial:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.blog-card--editorial .blog-card__image {
+  display: block;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--aesthetic-radius, var(--radius-lg));
+}
+
+.blog-card--editorial .blog-card__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.blog-card--editorial:hover .blog-card__image img {
+  transform: scale(1.04);
+}
+
+.blog-card--editorial .blog-card__body {
+  padding: var(--space-md) 0 0;
+}
+
+.blog-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs) var(--space-sm);
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-light);
+}
+
+.blog-card__meta .blog-card__category {
+  display: inline;
+  margin: 0;
+}
+
+.blog-card__read-time::before {
+  content: "\00B7";
+  margin-right: var(--space-sm);
+}
+
+.blog-card--editorial .blog-card__title {
+  font-size: var(--text-xl);
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .blog-grid--editorial > .blog-card:last-child:nth-child(odd) {
+    grid-column: auto;
+    justify-self: stretch;
+    width: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .blog-grid--editorial > .blog-card:last-child:nth-child(3n+1) {
+    grid-column: auto;
+  }
+  .blog-grid--editorial > .blog-card--feature {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+  .blog-grid--editorial > .blog-card--feature:last-child {
+    grid-column: 1 / -1;
+  }
+  .blog-grid--editorial > .blog-card--feature .blog-card__image {
+    aspect-ratio: 16 / 10;
+  }
+  .blog-grid--editorial > .blog-card--feature .blog-card__body {
+    padding: 0;
+  }
+  .blog-grid--editorial > .blog-card--feature .blog-card__title {
+    font-size: var(--text-h3-desktop);
+  }
+}
+
+/* =============================================
+   PHOTO BAND (v1.7.19, 2026-10-18)
+   One wide photo with an optional caption, as its own band.
+   Markup: section.section.photo-band > .container > figure.photo-band__figure
+           > img.photo-band__img + figcaption.photo-band__caption (optional)
+   --full runs the photo edge to edge (no container width, no rounding).
+   ============================================= */
+.photo-band__figure {
+  margin: 0;
+}
+
+.photo-band__img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+}
+
+.photo-band__caption {
+  margin-top: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-light);
+  text-align: center;
+}
+
+.photo-band--full {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.photo-band--full .container {
+  max-width: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.photo-band--full .photo-band__img {
+  border-radius: 0;
+}
+
+.photo-band--full .photo-band__caption {
+  padding: 0 var(--space-lg) var(--space-md);
+}
+
+@media (max-width: 767px) {
+  .photo-band__img {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* =============================================
+   TEXT PHOTO (v1.7.22, 2026-10-22)
+   One photo inside a column of text, between paragraphs: as wide as the
+   column, its own shape, rounded like the library's other photos. A very
+   tall photo is cut to 600px, keeping its upper part, where faces usually
+   are. For one wide photo as a band of its own, use .photo-band.
+   Markup: img.text-photo, a child of the text column.
+   ============================================= */
+.text-photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: cover;
+  object-position: 50% 30%;
+  margin: var(--space-lg) 0;
+  border-radius: var(--radius-lg);
+}
+
+.text-photo:first-child {
+  margin-top: 0;
+}
+
+.text-photo:last-child {
+  margin-bottom: 0;
+}
+
+/* =============================================
+   COLOUR BANDS (v1.7.20, 2026-10-18)
+   Put a whole band (.section, .hero, .page-header) on one of four brand
+   colours: class="section band band--2". Each slot defaults to a palette
+   colour (1 primary, 2 secondary, 3 accent, 4 bg-dark); a site retargets a
+   slot in its theme.css :root with --band-N-bg and sets the text colour that
+   reads on it with --band-N-text (white by default: give a light colour a
+   dark ink so its text stays at 4.5:1 or better). Cards and steps inside a
+   band keep their own surface and text colours; only the band's own heading,
+   label, intro, quote and hero words take the band's text colour.
+   First used by figspeech.co.uk (her orange, coral, lime and teal bands).
+   ============================================= */
+.band--1 { --band-bg: var(--band-1-bg, var(--color-primary));   --band-text: var(--band-1-text, var(--color-text-inverse)); }
+.band--2 { --band-bg: var(--band-2-bg, var(--color-secondary)); --band-text: var(--band-2-text, var(--color-text-inverse)); }
+.band--3 { --band-bg: var(--band-3-bg, var(--color-accent));    --band-text: var(--band-3-text, var(--color-text-inverse)); }
+.band--4 { --band-bg: var(--band-4-bg, var(--color-bg-dark));   --band-text: var(--band-4-text, var(--color-text-inverse)); }
+
+.band {
+  display: flow-root; /* holds its children's margins, so a band never leaks a white strip */
+  background-color: var(--band-bg);
+  color: var(--band-text);
+}
+
+.band > .container > :is(h1, h2, h3, p, .section-label, .section-subtitle),
+.band .hero__heading,
+.band .hero__text,
+.band .hero__label,
+.band .blockquote__text,
+.band .blockquote__cite,
+.band .blockquote--pull::before,
+.band .split__text > :is(h2, h3, p),
+.band .split__content > :is(h2, h3, p) {
+  color: inherit;
+}
+
+/* The outline button takes the band's text colour, so it reads on any band. */
+.band .btn--secondary:not(.card .btn, .process-step .btn) {
+  color: var(--band-text);
+  border-color: var(--band-text);
+}
+
+.band .btn--secondary:not(.card .btn, .process-step .btn):hover {
+  background-color: var(--band-text);
+  color: var(--band-bg);
+}
+
+/* A band is its own background. These two mirror the alternation safety net
+   (GOLDEN RULE) one class stronger, so the net never repaints a band and never
+   tints the plain section after one. Overrides, not an edit to the net's own
+   selector, so no site's copy of the net changes. */
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner)
+  + .section.band:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
+  background-color: var(--band-bg);
+}
+
+main > .section.band:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner)
+  + .section:not(.band):not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
+  background-color: var(--color-bg);
+}
+
+/* Words in a band's text columns (v1.7.23, 2026-10-23). Headings, paragraphs and ticked lists that sit in a
+   text column inside a band (including what a client adds in the Page Editor or the AI Site Editor) take the
+   band's text colour, like the band's own heading; before this only words straight in .container or a split
+   column did, so words in a .text-block or intro column stayed dark on a dark band. A quote on its own panel
+   (.blockquote without --pull) keeps the panel's colours, so it never turns light-on-light; a pull quote has
+   no panel and still takes the band's colour. Cards and steps keep their own colours, as before. */
+.band :is(.container, .container--narrow, .text-center, .text-left, .text-block, .text-block--center, .intro__text,
+  .service-detail, .split__text, .split__content, .story-split__text, .story-text__header, .story-text__content,
+  .video-split__header, .video-split__content, .about-split-third__text, .legal-content, div:not([class]))
+  > :is(h2, h3, p):not(.card *, .process-step *),
+.band :is(.container, .container--narrow, .text-center, .text-left, .text-block, .text-block--center, .intro__text,
+  .service-detail, .split__text, .split__content, .story-split__text, .story-text__header, .story-text__content,
+  .video-split__header, .video-split__content, .about-split-third__text, .legal-content, div:not([class]))
+  > .checklist:not(.card *, .process-step *) > .checklist__item {
+  color: inherit;
+}
+
+.band .blockquote:not(.blockquote--pull) .blockquote__text {
+  color: var(--color-text);
+}
+
+.band .blockquote:not(.blockquote--pull) .blockquote__cite {
+  color: var(--color-text-heading);
+}
+
+/* =============================================
+   FULL-COLOUR LOGO ROW (v1.7.20, 2026-10-18)
+   .trust-bar greys and fades its logos; add .trust-bar--colour to show them
+   in their own colours at full strength (registration and membership bodies,
+   whose small print must stay readable). Markup: div.trust-bar.trust-bar--colour
+   > img.trust-bar__logo. First used by figspeech.co.uk (HCPC, RCSLT, ASLTIP).
+   ============================================= */
+.trust-bar--colour .trust-bar__logo,
+.trust-bar--colour .trust-bar__logo:hover {
+  opacity: 1;
+  filter: none;
+}
+
+/* =============================================
+   BOLD OPTIONS (v1.7.20, 2026-10-18)
+   Opt-in classes for bright, child-friendly brands. Nothing changes on a
+   site until it uses one. Token hooks added in the same release (each
+   falls back to the old value): --btn-accent-text / --btn-accent-hover-text
+   (base.css), --nav-name-color, --nav-title-size, --nav-title-transform,
+   --nav-title-tracking, --font-signature, --signature-style,
+   --signature-size, --hero-actions-justify, --blockquote-rule-color,
+   --nav-title-phone-display, --btn-radius (base.css), --page-header-padding,
+   --page-header-padding-desktop, --nav-two-tier-padding, --nav-top-padding,
+   --nav-name-size, --form-check-size, --form-check-accent. First used by figspeech.co.uk.
+   ============================================= */
+
+/* Hero tick pills, bold: white pills, 16px words, green ticks. */
+.hero__ticks--bold li {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+  background-color: var(--color-surface);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+  padding: 6px var(--space-md);
+}
+
+.hero__ticks--bold svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-success);
+  stroke-width: 3;
+}
+
+/* Card icon, bold: a larger solid disc in the primary colour, white icon. */
+.card .card__icon--bold {
+  width: 64px;
+  height: 64px;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.card .card__icon--bold svg {
+  width: 32px;
+  height: 32px;
+}
+
+/* Pull quote, bold: upright and heavy, for display fonts with no italic. */
+.blockquote--bold .blockquote__text {
+  font-style: normal;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--text-lg);
+  line-height: var(--line-height-tight);
+}
+
+@media (min-width: 768px) {
+  .blockquote--bold .blockquote__text {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (max-width: 767px) {
+  .blockquote--pull.blockquote--bold {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Hero lead line: the subtitle one step up from the hero text, in bold. */
+.hero__text--lead {
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-normal);
+}
+
+/* Bold quote mark: a short rule instead of the quote glyph, which a rounded
+   display font draws small enough to read as a stray character. */
+.blockquote--pull.blockquote--bold::before {
+  content: '';
+  width: 64px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--blockquote-rule-color, currentColor);
+  margin: 0 auto var(--space-lg);
+}
+
+/* Token hook: the tagline under the brand name on small phones. A logo, a
+   name and a two-line tagline are taller than the 72px bar; a site can set
+   --nav-title-phone-display: none to keep the bar clean (default unchanged). */
+@media (max-width: 479px) {
+  .nav__title {
+    display: var(--nav-title-phone-display, inline);
+  }
+}
+
+/* Square image box: shows a square picture (a drawing, a logo, a product)
+   whole instead of cropping it to the default 4:3. */
+.card--image-top .card__image-wrap--square {
+  aspect-ratio: 1 / 1;
+}
+
+/* Footer logo: the brand mark above the footer name. */
+.footer__logo {
+  display: block;
+  width: auto;
+  height: 72px; /* fixed, so the space is kept before a lazy logo loads */
+  margin-bottom: var(--space-md);
+  border-radius: var(--radius-md);
 }
