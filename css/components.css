@@ -11080,3 +11080,1334 @@ main > .section.band:not(.section--alt):not(.section--dark):not(.cta-banner):not
   margin-bottom: var(--space-md);
   border-radius: var(--radius-md);
 }
+
+/* =============================================
+   PAGE FRAME (v1.7.25)
+   The whole page as a centred box over a full-page photograph, the look of
+   many older client sites moving off Elementor (woodlandscounselling.co.uk).
+   Put the class on <body>; the photo is a token, set in the site's theme.css:
+     :root { --page-frame-image: url('../images/background.jpg'); }
+   Optional: --page-frame-width (default 1180px), --page-frame-gap (default
+   --space-lg), --page-frame-position (default top center), --page-frame-bg
+   (the colour behind the photo, default --color-bg-dark).
+   From 1024px only: on phones and tablets the page is full width as usual,
+   because a frame there only steals width.
+   ============================================= */
+@media (min-width: 1024px) {
+  .page-frame {
+    background-color: var(--page-frame-bg, var(--color-bg-dark));
+    background-image: var(--page-frame-image, none);
+    background-size: cover;
+    background-position: var(--page-frame-position, top center);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    padding-top: var(--page-frame-gap, var(--space-lg));
+  }
+
+  .page-frame > .announcement-bar,
+  .page-frame > .nav,
+  .page-frame > main,
+  .page-frame > .footer {
+    max-width: var(--page-frame-width, 1180px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .page-frame > .nav,
+  .page-frame > main {
+    background-color: var(--color-bg);
+  }
+
+  .page-frame > .footer {
+    margin-bottom: var(--page-frame-gap, var(--space-lg));
+  }
+
+  /* The fixed scroll bar stays the width of the box, not of the window */
+  .page-frame > .nav-scroll {
+    max-width: var(--page-frame-width, 1180px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* =============================================
+   TWO-TIER MENU BAR COLOUR (v1.7.25, token hook)
+   The menu row of .nav--two-tier in its own colour, with the brand row above
+   it left as it is (woodlandscounselling.co.uk: white brand row, sage menu
+   bar). Opt in from the site's theme.css :root:
+     --nav-bar-bg: #93A37E;     the bar
+     --nav-bar-text: #FFFFFF;   its menu words (keep 4.5:1 on the bar)
+   Desktop only (1100px+), where the bar is a row of its own; below that the
+   row holds only the menu button. Dropdown panels keep their own colours.
+   ============================================= */
+@media (min-width: 1100px) {
+  .nav--two-tier .nav__bottom {
+    background-color: var(--nav-bar-bg, transparent);
+  }
+
+  .nav--two-tier .nav__bottom .nav__links > .nav__link,
+  .nav--two-tier .nav__bottom .nav__links > .nav__dropdown > .nav__link {
+    color: var(--nav-bar-text, var(--color-text));
+  }
+
+  .nav--two-tier .nav__bottom .nav__links > .nav__link::after,
+  .nav--two-tier .nav__bottom .nav__links > .nav__dropdown > .nav__link::after {
+    background-color: var(--nav-bar-text, var(--color-primary));
+  }
+}
+
+/* =============================================
+   TOKEN HOOKS (v1.7.25), set in a site's theme.css :root; each falls back to
+   the old value, so a site changes only when it opts in.
+     --hero-slope-panel        the light slope hero's angled panel (default a
+                               12% tint of the primary; a pale band colour
+                               such as var(--color-bg-alt) when the primary is
+                               a deep red that would tint it pink)
+     --trust-bar-logo-height   logo height in .trust-bar (default 52px, 60px
+                               from 768px); raise it when a membership logo's
+                               small print must stay readable
+   ============================================= */
+.hero--slope-light .hero__inner::before {
+  background: var(--hero-slope-panel, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)));
+}
+
+.trust-bar__logo {
+  height: var(--trust-bar-logo-height, 52px);
+}
+
+@media (min-width: 768px) {
+  .trust-bar__logo {
+    height: var(--trust-bar-logo-height, 60px);
+  }
+}
+
+/* The handwritten sign-off also in the homepage welcome band (v1.7.25):
+   .intro__text .signature, same look as .split__text .signature */
+.intro__text .signature {
+  font-family: var(--font-signature, var(--font-heading));
+  font-size: var(--signature-size, var(--text-xl));
+  font-style: var(--signature-style, italic);
+  color: var(--color-text-heading);
+  margin-top: var(--space-lg);
+}
+
+/* =============================================
+   MORE TOKEN HOOKS (v1.7.25), from the first Elementor-to-flat move
+   (woodlandscounselling.co.uk). A site's look is set here, in tokens, so the
+   library holds structures and each site keeps its own style. Every hook
+   falls back to the old value.
+     --heading-weight       h1 to h6 and the brand name (default bold; 400 for
+                            a regular-weight serif look)
+     --hero-heading-color   the hero h1 on light heroes (default heading colour)
+     --footer-brand-color   the brand name in .footer--simple
+     --nav-title-color      the tagline under the brand name
+     --nav-title-font       its font (default the body font)
+     --intro-align          vertical alignment of .intro__inner and
+                            .intro__inner--reversed (default centre; start
+                            puts the portrait level with the heading)
+   ============================================= */
+h1, h2, h3, h4, h5, h6,
+.nav__name {
+  font-weight: var(--heading-weight, var(--font-weight-bold));
+}
+
+.hero__heading {
+  color: var(--hero-heading-color, var(--color-text-heading));
+}
+
+.footer--simple .footer__brand-name {
+  color: var(--footer-brand-color, var(--color-text-heading));
+}
+
+.nav__title {
+  color: var(--nav-title-color, var(--color-text-light));
+  font-family: var(--nav-title-font, inherit);
+}
+
+.intro__inner,
+.intro__inner--reversed {
+  align-items: var(--intro-align, center);
+}
+
+/* .page-frame and the slope hero / two-tier bar (v1.7.25): inside the box the
+   slope hero keeps a gutter either side instead of running into the box edge,
+   and a coloured two-tier menu bar runs the full width of the box. */
+@media (min-width: 1024px) {
+  .page-frame .hero--slope-dark .hero__inner,
+  .page-frame .hero--slope-light .hero__inner {
+    width: auto;
+    margin-left: var(--space-lg);
+    margin-right: var(--space-lg);
+  }
+}
+
+@media (min-width: 1100px) {
+  .page-frame .nav--two-tier .nav__bottom {
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+}
+
+/* Tap-to-call on phones (v1.7.25, token hook). Below 900px the
+   two-tier header hides its contact row (it shows from 900px); set
+   --nav-call-phone-display: flex in
+   a site's theme.css to show the phone number (only the item holding a tel:
+   link) on its own line under the brand. No markup change, so the editor's nav
+   rebuild cannot drop it. */
+@media (max-width: 899px) {
+  .nav--two-tier .nav__top {
+    flex-wrap: wrap;
+  }
+
+  .nav--two-tier .nav__contact {
+    display: var(--nav-call-phone-display, none);
+    width: 100%;
+    margin-top: var(--space-xs);
+  }
+
+  .nav--two-tier .nav__contact-item {
+    display: none;
+  }
+
+  .nav--two-tier .nav__contact-item:has(a[href^="tel:"]) {
+    display: flex;
+    font-size: var(--text-base);
+  }
+
+  .nav--two-tier .nav__contact-item a[href^="tel:"] {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px; /* a thumb-sized tap target */
+  }
+}
+
+/* The footer brand name follows --heading-weight too (v1.7.25) */
+.footer--simple .footer__brand-name {
+  font-weight: var(--heading-weight, var(--font-weight-bold));
+}
+
+/* .page-header--rule (v1.7.25): a short line in the primary colour under the
+   page title, the divider many Elementor page titles carry. */
+.page-header--rule h1::after {
+  content: '';
+  display: block;
+  width: var(--page-header-rule-width, 64px); /* v1.7.26 hooks */
+  height: var(--page-header-rule-height, 2px);
+  margin: var(--page-header-rule-gap, var(--space-md)) auto 0;
+  background-color: var(--color-primary);
+}
+
+/* =============================================
+   SHOW BY SCREEN SIZE (v1.7.25)
+   Elementor's "Hide On Desktop / Tablet / Mobile" switches, at Elementor's own
+   breakpoints, so a converted site keeps content that its old site showed on
+   one screen size only (woodlandscounselling.co.uk: the portrait sits top right
+   on desktop and after the content on phones). Combine them freely:
+   class="hide-tablet hide-desktop" shows on phones only.
+     .hide-mobile    hidden below 768px
+     .hide-tablet    hidden from 768px to 1024px
+     .hide-desktop   hidden from 1025px
+   Use sparingly: anything duplicated for two screen sizes has to be edited
+   twice.
+   ============================================= */
+@media (max-width: 767px) {
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .hide-tablet { display: none !important; }
+}
+
+@media (min-width: 1025px) {
+  .hide-desktop { display: none !important; }
+}
+
+/* .text-photo--natural (v1.7.25): a photo narrower than its column shown at its
+   own width, centred, never stretched (a 600px photo of a real room in a 752px
+   reading column). The converter adds it when an image is narrower than the column. */
+.text-photo--natural {
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* =============================================
+   v1.7.26 - THE LOOKS ELEMENTOR SITES ARE BUILT FROM
+   From woodlandscounselling.co.uk (30-10-2026), whose first flat rebuild Rick
+   rejected beside her original: the library had drawn its own nearest version
+   of her header, hero, sidebar, tabs and footer instead of hers. Each piece
+   below is a structure many Elementor sites share; every size, colour and
+   spacing is a token with her measured value as the example, so the next site
+   sets its own numbers in theme.css and adds no CSS.
+   Measure the original first: scripts/style_parity.py.
+   ============================================= */
+
+/* --- Page frame as a share of the window (Elementor's boxed page: 90% up to a
+   maximum), and the box's own shadow. Sets:
+     --page-frame-fluid: 90%;    --page-frame-shadow: 0 0 10px rgba(0,0,0,.5);  */
+@media (min-width: 1024px) {
+  .page-frame > .announcement-bar,
+  .page-frame > .nav,
+  .page-frame > main,
+  .page-frame > .footer,
+  .page-frame > .nav-scroll {
+    width: var(--page-frame-fluid, auto);
+  }
+
+  .page-frame > .nav,
+  .page-frame > main,
+  .page-frame > .footer {
+    box-shadow: var(--page-frame-shadow, none);
+  }
+}
+
+/* --- Headings level by level, and the brand name. Sets --h1-weight,
+   --h2-weight, --h3-weight (each falls back to --heading-weight),
+   --nav-name-weight, --nav-name-tracking. */
+h1 { font-weight: var(--h1-weight, var(--heading-weight, var(--font-weight-bold))); }
+h2 { font-weight: var(--h2-weight, var(--heading-weight, var(--font-weight-bold))); }
+h3 { font-weight: var(--h3-weight, var(--heading-weight, var(--font-weight-bold))); }
+
+.nav__name {
+  font-weight: var(--nav-name-weight, var(--heading-weight, var(--font-weight-bold)));
+  letter-spacing: var(--nav-name-tracking, normal);
+}
+
+/* --- Section in the light grey surface colour (a third band colour beside
+   plain and --alt): <section class="section section--muted">. It is its own
+   background: the alternation safety net (GOLDEN RULE) neither repaints it nor
+   tints the plain section after it (same pattern as .band). */
+.section--muted,
+main > .section:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner)
+  + .section.section--muted:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
+  background-color: var(--color-surface-alt);
+}
+
+main > .section.section--muted:not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner)
+  + .section:not(.section--muted):not(.band):not(.section--alt):not(.section--dark):not(.cta-banner):not(.cta-mid-banner) {
+  background-color: var(--color-bg);
+}
+
+/* --- Two-tier menu bar: the words, their spacing and the bar's own padding.
+   Sets --nav-link-size, --nav-link-weight, --nav-link-padding (e.g. 13px 20px,
+   which makes the bar as tall as the links), --nav-link-gap, --nav-bar-padding,
+   --nav-active-line (0% hides the line under the current page; hover keeps it). */
+@media (min-width: 1100px) {
+  .nav--two-tier .nav__bottom {
+    padding-top: var(--nav-bar-padding, var(--space-sm));
+    padding-bottom: var(--nav-bar-padding, var(--space-sm));
+  }
+
+  .nav--two-tier .nav__links {
+    gap: var(--nav-link-gap, var(--space-lg));
+  }
+
+  .nav--two-tier .nav__links > .nav__link,
+  .nav--two-tier .nav__links > .nav__dropdown > .nav__link {
+    font-size: var(--nav-link-size, var(--text-base));
+    font-weight: var(--nav-link-weight, var(--font-weight-medium));
+    padding: var(--nav-link-padding, var(--space-xs) 0);
+  }
+
+  .nav--two-tier .nav__links > .nav__link--active::after {
+    width: var(--nav-active-line, 100%);
+  }
+
+  .nav--two-tier .nav__links > .nav__link:hover::after {
+    width: 100%;
+  }
+}
+
+/* =============================================
+   .nav--brand-place (with .nav--two-tier): the brand stack of many Elementor
+   headers. Desktop: name, tagline and the place on three lines at the left,
+   phone and email top right, the social icon under them. Phones: everything
+   centred in one column, the menu button centred in the menu bar.
+   Markup is the normal two-tier nav; the FIRST .nav__contact-item is the place
+   (its icon is hidden), the LAST holds the social link(s):
+     <nav class="nav nav--two-tier nav--brand-place">
+   Sets: --nav-top-padding / --nav-top-padding-bottom (brand row),
+   --nav-contact-size (contact words), --nav-place-gap (tagline to place),
+   --nav-social-bg / --nav-social-size (round social icon), --nav-toggle-bg and
+   --nav-toggle-bar (the menu button on phones).
+   ============================================= */
+.nav--two-tier.nav--brand-place {
+  padding: 0;
+}
+
+.nav--brand-place .nav__top {
+  flex-wrap: wrap;
+  padding-top: var(--nav-top-padding, 20px);
+  padding-bottom: var(--nav-top-padding-bottom, var(--space-lg));
+  row-gap: var(--nav-place-gap, var(--space-sm));
+  column-gap: var(--space-lg);
+}
+
+.nav--brand-place .nav__contact {
+  display: contents;
+}
+
+.nav--brand-place .nav__brand {
+  flex: 1 1 auto;
+}
+
+.nav--brand-place .nav__contact-item {
+  display: flex;
+  font-size: var(--nav-contact-size, var(--text-sm));
+  color: var(--color-text);
+}
+
+.nav--brand-place .nav__contact-item a {
+  color: inherit;
+  font-weight: var(--font-weight-normal);
+}
+
+.nav--brand-place .nav__contact-item svg {
+  color: var(--color-secondary);
+}
+
+/* the place: its own line under the tagline */
+.nav--brand-place .nav__contact-item:first-child {
+  order: 2;
+  flex: 1 0 calc(100% - 4rem);
+}
+
+.nav--brand-place .nav__contact-item:first-child svg {
+  display: none;
+}
+
+.nav--brand-place .nav__contact-item:last-child {
+  order: 3;
+  margin-left: auto;
+}
+
+/* the social link as a round icon */
+.nav--brand-place .nav__contact-item:last-child a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nav-social-size, 32px);
+  height: var(--nav-social-size, 32px);
+  border-radius: 50%;
+  background-color: var(--nav-social-bg, var(--color-primary));
+  color: var(--color-text-inverse);
+}
+
+.nav--brand-place .nav__contact-item:last-child svg {
+  width: 50%;
+  height: 50%;
+  color: inherit;
+}
+
+/* The menu bar runs the full width of the header (and of the page box), not
+   just the width of the menu: its colour is drawn wider than the bar and the
+   header clips it at its own edges. */
+.nav--two-tier.nav--brand-place {
+  overflow-x: clip;
+}
+
+.nav--two-tier.nav--brand-place .nav__bottom {
+  position: relative;
+}
+
+.nav--two-tier.nav--brand-place .nav__bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -50vw;
+  right: -50vw;
+  background-color: var(--nav-bar-bg, transparent);
+  z-index: -1;
+}
+
+@media (min-width: 1100px) {
+  .nav--two-tier.nav--brand-place .nav__bottom,
+  .page-frame .nav--two-tier.nav--brand-place .nav__bottom {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border-top: 0;
+    background-color: transparent;
+  }
+}
+
+/* Below 900px: one centred column */
+@media (max-width: 899px) {
+  .nav--brand-place .nav__top {
+    justify-content: center;
+    text-align: center;
+    column-gap: var(--space-md);
+  }
+
+  .nav--brand-place .nav__brand {
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+
+  .nav--brand-place .nav__brand-text {
+    align-items: center;
+  }
+
+  .nav--two-tier.nav--brand-place .nav__contact-item,
+  .nav--two-tier.nav--brand-place .nav__contact-item:has(a[href^="tel:"]) {
+    display: flex;
+    font-size: var(--nav-contact-size, var(--text-base));
+  }
+
+  .nav--brand-place .nav__contact-item:first-child {
+    order: 0;
+    flex: 1 0 100%;
+    justify-content: center;
+  }
+
+  .nav--brand-place .nav__contact-item:last-child {
+    flex: 1 0 100%;
+    justify-content: center;
+    margin-left: 0;
+  }
+}
+
+/* Below 1100px the menu bar is a row of its own with the menu button centred */
+@media (max-width: 1099px) {
+  .nav--two-tier.nav--brand-place .nav__top {
+    padding-right: 0;
+  }
+
+  .nav--two-tier.nav--brand-place .nav__bottom {
+    position: relative;
+    justify-content: center;
+    padding: 3px 0;
+  }
+
+  .nav--two-tier.nav--brand-place .nav__toggle {
+    background-color: var(--nav-toggle-bg, transparent);
+    border-radius: 0;
+    padding: 9px 8px;
+  }
+
+  .nav--two-tier.nav--brand-place .nav__toggle-bar {
+    background-color: var(--nav-toggle-bar, var(--color-text-heading));
+  }
+}
+
+/* =============================================
+   .hero--slope-cut (with .hero--slope-light): the Elementor two-column hero
+   with a slanted panel. Desktop: the photo on the left with one rounded
+   corner and no shadow, the panel behind it cut on a slant, the text in the
+   panel on the right. Phones: the photo edge to edge, then the panel.
+   Sets: --hero-cut-image-width (47.6%), --hero-cut-image-height (350px),
+   --hero-cut-image-radius (0 0 0 50px), --hero-cut-top / --hero-cut-bottom
+   (where the slant meets the top and bottom edge, 11% / 34%),
+   --hero-cut-content-padding (60px), --hero-cut-padding (the band, 32px 0 40px),
+   --hero-cut-heading-size (2rem), --hero-cut-heading-gap, --hero-lead-size,
+   --hero-cut-image-height-mobile (300px). The panel colour is --hero-slope-panel.
+   ============================================= */
+.hero--slope-light.hero--slope-cut .hero__heading {
+  font-size: var(--hero-cut-heading-size, 2rem);
+  margin-bottom: var(--hero-cut-heading-gap, var(--space-xl));
+}
+
+.hero--slope-cut .hero__text--lead {
+  font-size: var(--hero-lead-size, var(--text-md));
+}
+
+.hero--slope-cut .hero__text {
+  line-height: var(--hero-cut-line-height, var(--line-height-normal));
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .hero--slope-light.hero--slope-cut {
+    padding: var(--hero-cut-padding, 32px 0 40px);
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__inner,
+  .page-frame .hero--slope-light.hero--slope-cut .hero__inner {
+    grid-template-columns: var(--hero-cut-image-width, 47.6%) 1fr;
+    gap: 0;
+    padding: 0;
+    min-height: 0;
+    align-items: stretch;
+    width: calc(100% - 2 * var(--container-gutter, var(--space-lg)));
+    max-width: calc(var(--container-max) - 2 * var(--container-gutter, var(--space-lg)));
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__inner::before {
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    clip-path: polygon(var(--hero-cut-top, 11%) 0, 100% 0, 100% 100%, var(--hero-cut-bottom, 34%) 100%);
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__image-wrap {
+    align-self: center;
+    padding: 40px 0;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__image {
+    height: var(--hero-cut-image-height, 350px);
+    min-height: 0;
+    border-radius: var(--hero-cut-image-radius, 0 0 0 50px);
+    box-shadow: none;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__content {
+    padding: var(--hero-cut-content-padding, 60px);
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__text {
+    max-width: none;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero--slope-light.hero--slope-cut {
+    padding: 0;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__inner::before {
+    display: none;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__image {
+    width: 100%;
+    height: var(--hero-cut-image-height-mobile, 300px);
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__content {
+    background: var(--hero-slope-panel, color-mix(in srgb, var(--color-primary) 12%, var(--color-bg)));
+    padding: var(--hero-cut-content-padding-mobile, 60px 20px);
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__heading {
+    text-align: center;
+  }
+
+  .hero--slope-light.hero--slope-cut .hero__actions {
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   .sidebar-layout: the page's text in a wide column with a narrow column
+   beside it (a portrait card, contact details). The sidebar follows the text
+   on phones and tablets.
+     <div class="container sidebar-layout">
+       <div class="sidebar-layout__main"> ...text... </div>
+       <aside class="sidebar-layout__aside"> ...profile-card... </aside>
+     </div>
+   Sets: --sidebar-main (69%), --sidebar-aside (24%), --sidebar-gap (on
+   phones), --prose-h2-size / --prose-h2-weight and --prose-h3-size (headings
+   inside the main column, when the old site drew them smaller than section
+   titles).
+   ============================================= */
+.sidebar-layout {
+  display: grid;
+  gap: var(--sidebar-gap, var(--space-3xl));
+}
+
+.sidebar-layout__main {
+  min-width: 0;
+}
+
+.sidebar-layout__main h2 {
+  font-size: var(--prose-h2-size, var(--text-h2));
+  font-weight: var(--prose-h2-weight, var(--h2-weight, var(--heading-weight, var(--font-weight-bold))));
+  margin-bottom: var(--space-md);
+}
+
+.sidebar-layout__main h3 {
+  font-size: var(--prose-h3-size, var(--text-h3));
+  margin-top: var(--prose-h3-gap, var(--space-xl));
+  margin-bottom: var(--prose-h3-after, var(--space-sm));
+}
+
+/* paragraph gap in the main column (--prose-p-gap): an Elementor text box
+   separates paragraphs by a blank line, wider than the library's gap */
+.sidebar-layout__main p {
+  margin-bottom: var(--prose-p-gap, var(--space-md));
+}
+
+.sidebar-layout__main > h3:first-child,
+.sidebar-layout__main > :first-child > h3:first-child {
+  margin-top: 0;
+}
+
+@media (min-width: 1025px) {
+  .sidebar-layout {
+    grid-template-columns: var(--sidebar-main, 69%) var(--sidebar-aside, 24%);
+    justify-content: space-between;
+    align-items: start;
+  }
+}
+
+/* =============================================
+   .profile-card: a portrait with the name, a line of credentials and a
+   button, centred, no frame (the "about me" card many therapist sites put
+   beside their text).
+     <div class="profile-card">
+       <img class="profile-card__image" src=... alt=... width height>
+       <p class="profile-card__name">Catherine Nicholas</p>
+       <p class="profile-card__meta">BA (Hons) MBACP ...</p>
+       <a class="btn btn--accent" href=...>Learn More</a>
+     </div>
+   Sets --profile-name-size (1.5rem), --profile-meta-size / --profile-meta-weight.
+   ============================================= */
+.profile-card {
+  text-align: center;
+}
+
+.profile-card__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: var(--space-xl);
+}
+
+.profile-card__name {
+  font-family: var(--font-heading);
+  font-size: var(--profile-name-size, 1.5rem);
+  color: var(--color-text-heading);
+  line-height: 1.4;
+  margin-bottom: var(--space-sm);
+}
+
+.profile-card__meta {
+  font-size: var(--profile-meta-size, var(--text-base));
+  font-weight: var(--profile-meta-weight, var(--font-weight-semibold));
+  text-transform: uppercase;
+  line-height: 1.6;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+}
+
+/* =============================================
+   .tabs: tabbed text, the titles in a column of pills beside the panel from
+   768px (Elementor's vertical nested tabs), stacked above it on phones. One
+   panel shows at a time; main.js switches them and sets the keyboard and
+   screen reader roles. Without JavaScript every panel shows.
+     <div class="tabs">
+       <div class="tabs__list" role="tablist">
+         <button class="tabs__tab" type="button" role="tab" aria-selected="true" aria-controls="t1" id="t1-tab">Title</button> ...
+       </div>
+       <div class="tabs__panel" role="tabpanel" id="t1" aria-labelledby="t1-tab"> ...text... </div> ...
+     </div>
+   Sets --tabs-list-width (30%), --tabs-radius (20px), --tabs-panel-bg
+   (surface-alt), --tabs-active-bg (secondary).
+   ============================================= */
+.tabs {
+  display: grid;
+  gap: 10px;
+}
+
+.tabs__list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tabs__tab {
+  font: inherit;
+  font-size: var(--btn-font-size, var(--text-base));
+  font-weight: var(--btn-weight, var(--font-weight-semibold));
+  text-transform: var(--btn-transform, none);
+  text-align: left;
+  line-height: 1.2;
+  padding: 15px 35px;
+  border: 0;
+  border-radius: var(--tabs-radius, 20px);
+  background-color: var(--tabs-panel-bg, var(--color-surface-alt));
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.tabs__tab:hover {
+  color: var(--color-primary);
+}
+
+.tabs__tab[aria-selected="true"] {
+  background-color: var(--tabs-active-bg, var(--color-secondary));
+  color: var(--color-text-inverse);
+}
+
+.tabs__tab:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tabs__panel {
+  background-color: var(--tabs-panel-bg, var(--color-surface-alt));
+  border-radius: var(--tabs-radius, 20px);
+  padding: var(--space-xl) var(--space-lg);
+}
+
+.tabs--ready .tabs__panel[hidden] {
+  display: none;
+}
+
+/* Phones: each panel straight under its own title, as Elementor's tabs do
+   (titles 1 to 8; a panel is .tabs' child n+1 because the list comes first) */
+@media (max-width: 767px) {
+  .tabs { display: flex; flex-direction: column; }
+  .tabs__list { display: contents; }
+  .tabs__tab:nth-child(1) { order: 1; }  .tabs > .tabs__panel:nth-child(2) { order: 2; }
+  .tabs__tab:nth-child(2) { order: 3; }  .tabs > .tabs__panel:nth-child(3) { order: 4; }
+  .tabs__tab:nth-child(3) { order: 5; }  .tabs > .tabs__panel:nth-child(4) { order: 6; }
+  .tabs__tab:nth-child(4) { order: 7; }  .tabs > .tabs__panel:nth-child(5) { order: 8; }
+  .tabs__tab:nth-child(5) { order: 9; }  .tabs > .tabs__panel:nth-child(6) { order: 10; }
+  .tabs__tab:nth-child(6) { order: 11; } .tabs > .tabs__panel:nth-child(7) { order: 12; }
+  .tabs__tab:nth-child(7) { order: 13; } .tabs > .tabs__panel:nth-child(8) { order: 14; }
+  .tabs__tab:nth-child(8) { order: 15; } .tabs > .tabs__panel:nth-child(9) { order: 16; }
+}
+
+@media (min-width: 768px) {
+  .tabs {
+    grid-template-columns: var(--tabs-list-width, 30%) 1fr;
+    align-items: start;
+  }
+
+  .tabs__panel {
+    grid-column: 2;
+    grid-row: 1 / span 20;
+    padding: 40px;
+  }
+}
+
+/* =============================================
+   Flat CTA band and the footer card.
+   .section.cta-mid-banner takes --cta-band-bg (a flat colour instead of the
+   gradient), and .btn--outline-light is the outlined white button of many
+   Elementor CTA strips. .cta-mid-banner--center-mobile centres it on phones.
+   .footer--card (with .footer--simple): the footer's contents in a white card
+   on the band colour, everything centred (name, phone and email on their own
+   lines, a round social icon .footer__social, the legal links in the primary
+   colour, the copyright). Sets --footer-card-bg, --footer-card-padding (40px),
+   --footer-name-size (2.125rem).
+   ============================================= */
+.section.cta-mid-banner {
+  background: var(--cta-band-bg, linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%));
+  padding: var(--cta-band-padding, var(--space-2xl)) 0;
+}
+
+/* the handwritten sign-off also in the main column of .sidebar-layout */
+.sidebar-layout__main .signature {
+  font-family: var(--font-signature, var(--font-heading));
+  font-size: var(--signature-size, var(--text-xl));
+  font-style: var(--signature-style, italic);
+  color: var(--color-text-heading);
+  line-height: 1.6;
+}
+
+.btn--outline-light {
+  background-color: transparent;
+  color: var(--color-text-inverse);
+  border-color: var(--color-text-inverse);
+}
+
+.btn--outline-light:hover {
+  background-color: var(--color-text-inverse);
+  color: var(--color-primary);
+}
+
+@media (max-width: 767px) {
+  .cta-mid-banner--center-mobile .cta-mid-banner__inner {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+.footer--card {
+  padding: var(--space-xl) 0;
+}
+
+.footer--card > .container {
+  background-color: var(--footer-card-bg, var(--color-surface));
+  padding: var(--footer-card-padding, 40px);
+  max-width: calc(var(--container-max) - 2 * var(--container-gutter, var(--space-lg)));
+  width: calc(100% - 2 * var(--container-gutter, var(--space-lg)));
+}
+
+.footer--card .footer__brand-name {
+  font-size: var(--footer-name-size, 2.125rem);
+  margin-bottom: var(--space-md);
+}
+
+.footer--card .footer__links {
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: var(--space-md);
+}
+
+.footer--card .footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-md);
+  color: var(--color-text);
+  line-height: var(--line-height-normal);
+}
+
+.footer--card .footer__link svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-primary);
+}
+
+.footer--card .footer__social {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--nav-social-bg, var(--color-primary));
+  color: var(--color-text-inverse);
+  margin-bottom: var(--space-md);
+}
+
+.footer--card .footer__social svg {
+  width: 50%;
+  height: 50%;
+}
+
+.footer--card .footer__bottom {
+  border-top: 0;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.footer--card .footer__legal a {
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+}
+
+.footer--card .footer__copyright {
+  font-size: var(--text-sm);
+  color: #777;
+}
+
+/* .card--icon-bare (v1.7.26, with .card--feature): the icon drawn on its own,
+   no circle behind it, at --card-icon-size (50px), in the primary colour. */
+.card--icon-bare .card__icon,
+.section--alt .card--icon-bare .card__icon {
+  width: auto;
+  height: auto;
+  background: none;
+  border-radius: 0;
+}
+
+.card--icon-bare .card__icon svg {
+  width: var(--card-icon-size, 50px);
+  height: var(--card-icon-size, 50px);
+}
+
+/* v1.7.26 token hooks: --checklist-icon-size (20px) for the tick of
+   .checklist, --card-text-size (base) for .card__text. */
+.checklist > li > svg {
+  width: var(--checklist-icon-size, 20px);
+  height: var(--checklist-icon-size, 20px);
+  min-width: var(--checklist-icon-size, 20px);
+}
+
+.card__text {
+  font-size: var(--card-text-size, var(--text-base));
+}
+
+/* .text-note (v1.7.26): a paragraph in small print, for a notice the old site
+   set smaller than its body text (a safety message, terms in brief). The
+   Elementor converter adds it when a text box was set smaller than the body.
+   Size: --text-note-size (default --text-sm). */
+.text-note {
+  font-size: var(--text-note-size, var(--text-sm));
+}
+
+/* .as-h2 / .as-h3 / .as-h4 (v1.7.26): a heading drawn at another level's size,
+   so a page keeps a valid heading order (h1, h2, h3) while each heading looks as
+   the old site drew it. The Elementor converter adds it when an old page went
+   straight from its title to h3 sub-headings: they become h2.as-h3. */
+.as-h2 { font-size: var(--text-h2); font-weight: var(--h2-weight, var(--heading-weight, var(--font-weight-bold))); }
+.as-h3 { font-size: var(--text-h3); font-weight: var(--h3-weight, var(--heading-weight, var(--font-weight-bold))); }
+.as-h4 { font-size: var(--text-lg); }
+
+@media (min-width: 768px) {
+  .as-h2 { font-size: var(--text-h2-desktop); }
+  .as-h3 { font-size: var(--text-h3-desktop); }
+}
+
+.sidebar-layout__main .as-h3 {
+  font-size: var(--prose-h3-size, var(--text-h3));
+  font-weight: var(--h3-weight, var(--heading-weight, var(--font-weight-bold)));
+  margin-top: var(--prose-h3-gap, var(--space-xl));
+  margin-bottom: var(--prose-h3-after, var(--space-sm));
+}
+
+.sidebar-layout__main > .as-h3:first-child,
+.sidebar-layout__main > :first-child > .as-h3:first-child {
+  margin-top: 0;
+}
+
+/* .contact-form-card--muted (v1.7.26): the form on the light grey surface, no
+   frame, where the old site boxed its form in grey. .contact-columns: two
+   columns of contact details, form and map in the old site's own order
+   (with .grid.grid--2); a map inside one fills its column. Tokens:
+   --contact-columns-gap, --contact-map-height, --contact-form-radius. */
+.contact-form-card--muted {
+  background-color: var(--color-surface-alt);
+  border: 0;
+  box-shadow: none;
+  border-radius: var(--contact-form-radius, var(--aesthetic-radius));
+}
+
+.contact-columns {
+  gap: var(--contact-columns-gap, var(--space-2xl));
+}
+
+.contact-columns .map-placeholder {
+  height: auto;
+  margin: var(--space-md) 0;
+  border-radius: 0;
+}
+
+.contact-columns .map-placeholder iframe {
+  display: block;
+  width: 100%;
+  height: var(--contact-map-height, 300px);
+}
+
+main .contact-columns .checklist a:not([class]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-columns h2 {
+  font-size: var(--prose-h2-size, var(--text-h2));
+  font-weight: var(--prose-h2-weight, var(--h2-weight, var(--heading-weight, var(--font-weight-bold))));
+  margin-bottom: var(--space-md);
+}
+
+/* v1.7.26 token hooks: --nav-brand-gap (name to tagline in .nav--brand-place),
+   --form-label-size (form labels). */
+.nav--brand-place .nav__brand-text {
+  gap: var(--nav-brand-gap, 2px);
+}
+
+.form__label {
+  font-size: var(--form-label-size, var(--text-sm));
+}
+
+/* =============================================
+   .accordion--boxed (v1.7.26): Elementor's nested accordion as it is drawn by
+   default: each title in a thin box with the plus at the left, the open panel
+   on the light grey surface in the same thin border, the text at body size,
+   filling its column. Tokens: --accordion-border (#D5D8DC), --accordion-title-size
+   (1.25rem), --accordion-panel-padding (40px).
+   ============================================= */
+.accordion--boxed {
+  max-width: none;
+}
+
+.accordion--boxed .accordion__item {
+  border-bottom: 0;
+}
+
+.accordion--boxed .accordion__trigger {
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--accordion-border, #D5D8DC);
+  margin-top: -1px;
+  font-size: var(--accordion-title-size, 1.25rem);
+  color: var(--color-text-heading);
+}
+
+.accordion--boxed .accordion__icon {
+  width: 13px;
+  height: 13px;
+  color: var(--accordion-icon-color, var(--color-primary));
+  stroke-width: 4; /* Elementor's solid plus */
+}
+
+.accordion--boxed .accordion__content {
+  background-color: var(--color-surface-alt);
+  border: 1px solid var(--accordion-border, #D5D8DC);
+  border-top: 0;
+  padding: var(--accordion-panel-padding, 40px);
+}
+
+.accordion--boxed .accordion__content p {
+  font-size: inherit;
+  color: var(--color-text);
+  line-height: inherit;
+}
+
+/* Lists in a page's own text column (v1.7.26): the plain bullets and numbers
+   of the old site's text, indented (--prose-list-indent, 40px), with the gap
+   after the list --prose-list-gap (20px). Only lists with no class: tick lists
+   (.checklist) keep their own look. */
+.sidebar-layout__main ul:not([class]),
+.sidebar-layout__main ol:not([class]),
+.accordion__content ul:not([class]),
+.accordion__content ol:not([class]) {
+  list-style: disc;
+  padding-left: var(--prose-list-indent, 40px);
+  margin-bottom: var(--prose-list-gap, 20px);
+}
+
+.sidebar-layout__main ol:not([class]),
+.accordion__content ol:not([class]) {
+  list-style: decimal;
+}
+
+/* A section's own column width, carried from the old site (Elementor's
+   --content-width) on the element: <div class="container container--content"
+   style="--content-width: 960px">. Default 800px. */
+.container--content {
+  max-width: calc(var(--content-width, 800px) + 2 * var(--container-gutter, var(--space-lg)));
+}
+
+/* .as-h1: a heading inside the text drawn at the page title's size (the old
+   site's text carried its own h1, which becomes an h2 here). */
+.as-h1 {
+  font-size: var(--text-h1);
+  font-weight: var(--h1-weight, var(--heading-weight, var(--font-weight-bold)));
+}
+
+@media (min-width: 768px) {
+  .as-h1 { font-size: var(--text-h1-desktop); }
+}
+
+.sidebar-layout__main .as-h1 {
+  font-size: var(--text-h1-desktop);
+  font-weight: var(--h1-weight, var(--heading-weight, var(--font-weight-bold)));
+}
+
+/* Page title band: the title's own width (--page-header-title-width, e.g. 750px)
+   so a long title wraps as the old site wrapped it. */
+.page-header h1 {
+  max-width: var(--page-header-title-width, none);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Links inside the page's text: --content-link-decoration (underline) and
+   --content-link-color (primary), for an old site whose text links were plain. */
+main p a:not([class]),
+main li:not([class]) a:not([class]) {
+  color: var(--content-link-color, var(--color-primary));
+  text-decoration-line: var(--content-link-decoration, underline);
+}
+
+/* The page box's shadow without a seam where main meets the footer: each casts
+   it only sideways there (v1.7.26, with --page-frame-shadow). The nav is never
+   clipped, so its dropdown menus are never cut off. */
+@media (min-width: 1024px) {
+  .page-frame > main { clip-path: inset(0 -30px); }
+  .page-frame > .footer { clip-path: inset(0 -30px -30px -30px); }
+}
+
+/* .footer--card legal links flow as one line of text with their | separators;
+   size --footer-legal-size (default --text-xs). */
+.footer--card .footer__legal {
+  display: block;
+  text-align: center;
+  font-size: var(--footer-legal-size, var(--text-xs));
+  color: var(--color-primary);
+}
+
+.footer--card .footer__legal a {
+  font-size: inherit;
+}
+
+/* .checklist--solid (v1.7.26): a contact or details list with filled icons (a
+   phone, a clock, a pin) in the primary colour instead of ticks, the icon list
+   of most Elementor contact pages. .checklist--heading sets its words in the
+   heading font (--checklist-heading-size, 1.25rem). */
+.checklist--solid > li > svg {
+  color: var(--color-primary);
+  width: var(--checklist-solid-size, 20px);
+  height: var(--checklist-solid-size, 20px);
+  min-width: var(--checklist-solid-size, 20px);
+  margin-top: 0.3em;
+}
+
+.checklist--heading > li {
+  font-family: var(--font-heading);
+  font-size: var(--checklist-heading-size, 1.25rem);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+}
+
+/* A sub-heading kept inside a bulleted list (the old site bulleted it);
+   space above it --prose-list-heading-gap */
+.sidebar-layout__main li > h3,
+.sidebar-layout__main li > h4 {
+  margin: var(--prose-list-heading-gap, var(--space-md)) 0 var(--space-md);
+}
+
+/* a heading drawn at the page title's size keeps the title's own line height */
+.sidebar-layout__main .as-h1 {
+  line-height: var(--line-height-tight);
+}
+
+/* v1.7.26 token hooks for forms: --form-input-padding, --form-input-radius,
+   --form-input-size, --form-textarea-height, --form-label-weight,
+   --form-label-color, --form-label-gap. */
+.form__input,
+.form__textarea,
+.form__select {
+  padding: var(--form-input-padding, var(--space-md));
+  border-radius: var(--form-input-radius, var(--aesthetic-radius));
+  font-size: var(--form-input-size, var(--text-base));
+}
+
+.form__textarea {
+  min-height: var(--form-textarea-height, 150px);
+}
+
+.form__group {
+  gap: var(--form-label-gap, var(--space-sm));
+}
+
+.form__label {
+  font-weight: var(--form-label-weight, var(--font-weight-medium));
+  color: var(--form-label-color, var(--color-text-heading));
+}
+
+/* v1.7.26 token hooks for the flat CTA band and the footer card:
+   --cta-band-heading-gap (heading to sentence), --footer-card-padding-mobile. */
+.section.cta-mid-banner h2 {
+  margin-bottom: var(--cta-band-heading-gap, var(--space-xs));
+}
+
+@media (max-width: 767px) {
+  .footer--card > .container {
+    padding: var(--footer-card-padding-mobile, var(--footer-card-padding, 40px));
+  }
+}
+
+/* h2 to what follows it (--h2-gap, default --space-xl), for an old site whose
+   section titles sit closer to their content. */
+h2 {
+  margin-bottom: var(--h2-gap, var(--space-xl));
+}
+
+/* v1.7.26 spacing hooks measured off an Elementor original:
+   --prose-li-gap / --prose-li-line-height  list items in the text column
+   --trust-bar-padding                      the logo strip's own padding
+   --profile-card-padding-bottom            space under a portrait card
+   --form-input-line-height, --form-gap, --form-top  form fields and spacing
+   --contact-form-padding                   the grey form box (with --muted) */
+.section .sidebar-layout__main ul:not([class]) li,
+.section .sidebar-layout__main ol:not([class]) li {
+  margin-bottom: var(--prose-li-gap, var(--space-xs));
+  line-height: var(--prose-li-line-height, var(--line-height-relaxed));
+}
+
+.trust-bar {
+  padding: var(--trust-bar-padding, var(--space-lg) 0);
+}
+
+/* only a card that ends in a button (the saved "about me" card) carries it */
+.profile-card:has(> .btn) {
+  padding-bottom: var(--profile-card-padding-bottom, 0);
+}
+
+/* headings in the text column: space above and their own line height
+   (--prose-h2-gap, --prose-h2-line-height) */
+.sidebar-layout__main h2 {
+  margin-top: var(--prose-h2-gap, 0);
+  line-height: var(--prose-h2-line-height, var(--line-height-tight));
+}
+
+.form__input,
+.form__textarea,
+.form__select {
+  line-height: var(--form-input-line-height, inherit);
+}
+
+.form {
+  gap: var(--form-gap, var(--space-lg));
+  margin-top: var(--form-top, var(--space-lg));
+}
+
+.contact-form-card.contact-form-card--muted {
+  padding: var(--contact-form-padding, var(--space-2xl));
+}
+
+/* =============================================
+   SPACING FIXES (01-11-2026, allansalmon.com)
+   Three gaps every site could hit, fixed for all.
+   ============================================= */
+
+/* Header logo: a 70px logo in the 72px bar touched both edges. Kept to
+   56px so the bar always has 8px of air above and below it. */
+.nav__logo {
+  max-height: var(--nav-logo-height, 56px);
+}
+
+/* Header height (v1.7.26): a site whose logo looks tight sets
+   --nav-height in theme.css (88px gives a 56px logo 16px of white space above
+   and below). The phone menu starts below the header at any height. */
+.nav__inner {
+  height: var(--nav-height, 72px);
+}
+
+.nav__mobile {
+  padding-top: calc(var(--nav-height, 72px) + var(--space-xl));
+}
+
+/* Pricing: text after a pricing card sat flush against it. */
+.pricing-single:not(:last-child),
+.pricing-grid:not(:last-child) {
+  margin-bottom: var(--space-xl);
+}
+
+/* Qualifications: exactly three boxes sit on one row on desktop instead of
+   two plus an orphan. On tablets the third box takes the full row. Not
+   inside a split column, which is too narrow for three. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .quals-list:has(> :nth-child(3):last-child):not(.split__content .quals-list) > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* three across needs more than a narrow container gives, so the row
+     widens past it, centred, up to 1040px */
+  .quals-list:has(> :nth-child(3):last-child):not(.split__content .quals-list) {
+    --quals-row-width: min(1040px, calc(100vw - 4rem));
+    grid-template-columns: repeat(3, 1fr);
+    width: var(--quals-row-width);
+    margin-left: calc((100% - var(--quals-row-width)) / 2);
+    margin-right: calc((100% - var(--quals-row-width)) / 2);
+  }
+}

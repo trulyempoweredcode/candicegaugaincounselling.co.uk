@@ -160,6 +160,41 @@
   });
 
   /* -----------------------------------------
+     TABS (v1.7.26)
+     .tabs: one panel shows at a time. Without this script every panel shows,
+     so nothing is ever hidden from a visitor whose JavaScript fails.
+     Arrow keys move between tabs, as screen readers expect of a tablist.
+     ----------------------------------------- */
+  document.querySelectorAll('.tabs').forEach(function (tabs) {
+    var tabList = Array.prototype.slice.call(tabs.querySelectorAll('.tabs__tab'));
+    if (!tabList.length) return;
+    function select(tab, focus) {
+      tabList.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.setAttribute('tabindex', on ? '0' : '-1');
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) tab.focus();
+    }
+    var first = tabList.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabList[0];
+    select(first, false);
+    tabs.classList.add('tabs--ready');
+    tabList.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab, false); });
+      tab.addEventListener('keydown', function (e) {
+        var next = null;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') next = tabList[(i + 1) % tabList.length];
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') next = tabList[(i - 1 + tabList.length) % tabList.length];
+        if (e.key === 'Home') next = tabList[0];
+        if (e.key === 'End') next = tabList[tabList.length - 1];
+        if (next) { e.preventDefault(); select(next, true); }
+      });
+    });
+  });
+
+  /* -----------------------------------------
      BACK TO TOP
      Show button after scrolling 400px.
      ----------------------------------------- */
@@ -314,6 +349,13 @@
      ----------------------------------------- */
   var revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length && 'IntersectionObserver' in window) {
+    // v1.7.26 hooks: a site can start the reveal sooner (theme.css :root
+    // --reveal-root-margin: 0px; --reveal-threshold: 0) so a tall section at the
+    // bottom edge of the first screen is not shown as an empty band
+    // (woodlandscounselling.co.uk: her original shows it straight away).
+    var rootCss = getComputedStyle(document.documentElement);
+    var revealMargin = rootCss.getPropertyValue('--reveal-root-margin').trim() || '0px 0px -10% 0px';
+    var revealThreshold = parseFloat(rootCss.getPropertyValue('--reveal-threshold'));
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
@@ -322,8 +364,8 @@
         }
       });
     }, {
-      threshold: 0.08,
-      rootMargin: '0px 0px -10% 0px'
+      threshold: isNaN(revealThreshold) ? 0.08 : revealThreshold,
+      rootMargin: revealMargin
     });
 
     // Observe every reveal element. IntersectionObserver evaluates against the

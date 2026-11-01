@@ -147,6 +147,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-text-heading);
   line-height: var(--line-height-tight);
   font-weight: var(--font-weight-bold);
+  letter-spacing: var(--heading-tracking, normal); /* v1.7.26 hook */
   margin-bottom: var(--space-md);
   /* v1.7.8 — a heading carrying a long unbreakable token (a domain, an email,
      a hyphen-free compound) has nowhere to wrap and pushes past its container,
@@ -194,7 +195,7 @@ p:last-child:not(.section-subtitle) {
 }
 
 strong {
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--strong-weight, var(--font-weight-semibold)); /* v1.7.26 hook */
 }
 
 /* --- Layout Utilities --- */
@@ -203,8 +204,8 @@ strong {
   max-width: var(--container-max);
   margin-left: auto;
   margin-right: auto;
-  padding-left: var(--space-lg);
-  padding-right: var(--space-lg);
+  padding-left: var(--container-gutter, var(--space-lg)); /* v1.7.26 hook */
+  padding-right: var(--container-gutter, var(--space-lg));
 }
 
 .container--narrow {
@@ -212,8 +213,8 @@ strong {
 }
 
 .section {
-  padding-top: var(--space-3xl);
-  padding-bottom: var(--space-3xl);
+  padding-top: var(--section-padding, var(--space-3xl)); /* v1.7.26 hook: a site's own band spacing */
+  padding-bottom: var(--section-padding, var(--space-3xl));
 }
 
 .section--alt {
@@ -259,10 +260,12 @@ strong {
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl);
+  padding: var(--btn-padding, var(--space-md) var(--space-xl)); /* v1.7.26 hooks: padding, size, weight, capitals */
   font-family: var(--font-body);
-  font-size: var(--text-base);
-  font-weight: var(--font-weight-medium);
+  font-size: var(--btn-font-size, var(--text-base));
+  font-weight: var(--btn-weight, var(--font-weight-medium));
+  text-transform: var(--btn-transform, none);
+  letter-spacing: var(--btn-tracking, normal);
   line-height: 1;
   border-radius: var(--btn-radius, var(--aesthetic-radius)); /* v1.7.20 hook: pill buttons */
   transition: all var(--transition-base);
@@ -396,8 +399,8 @@ strong {
   }
 
   .section {
-    padding-top: var(--space-4xl);
-    padding-bottom: var(--space-4xl);
+    padding-top: var(--section-padding-desktop, var(--space-4xl));
+    padding-bottom: var(--section-padding-desktop, var(--space-4xl));
   }
 }
 
