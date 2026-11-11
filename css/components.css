@@ -12515,6 +12515,7 @@ html:has(.nav--sticky) {
 .about-hero__image,
 .team-member__image,
 .team-list-item__avatar,
-.testimonial__avatar {
+.testimonial__avatar,
+.card--portrait .card__image {
   object-position: var(--photo-focus, center 20%);
 }
