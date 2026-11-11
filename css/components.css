@@ -791,6 +791,45 @@ body:has(.nav__mobile--from-scroll.nav__mobile--open) .nav-scroll__toggle-bar:nt
   transform: translateY(-7px) rotate(-45deg);
 }
 
+/* v1.7.27 (11-11-2026): .nav-scroll--branded - the compact scroll bar in the
+   brand colour, with the logo on the left in place of the name and tagline.
+   Put <img class="nav-scroll__logo"> in .nav-scroll__brand; the logo must be
+   the light version that reads on the bar colour. Tokens: --nav-scroll-bg
+   (defaults to --color-primary), --nav-scroll-text (defaults to
+   --nav-bar-text, then white), --nav-scroll-height (64px) and
+   --nav-scroll-logo-height (52px): big enough for a wordmark to read.
+   Made for counsellingwithyuzi.com. */
+.nav-scroll--branded {
+  background-color: var(--nav-scroll-bg, var(--color-primary));
+  border-bottom-color: transparent;
+}
+
+.nav-scroll--branded .nav-scroll__inner {
+  height: var(--nav-scroll-height, 64px);
+}
+
+.nav-scroll--branded .nav-scroll__logo {
+  height: var(--nav-scroll-logo-height, 52px);
+}
+
+.nav-scroll--branded .nav-scroll__name,
+.nav-scroll--branded .nav-scroll__title,
+.nav-scroll--branded .nav-scroll__phone,
+.nav-scroll--branded .nav-scroll__phone svg,
+.nav-scroll--branded .nav-scroll__phone-icon,
+.nav-scroll--branded .nav-scroll__wa-icon {
+  color: var(--nav-scroll-text, var(--nav-bar-text, #FFFFFF));
+}
+
+.nav-scroll--branded .nav-scroll__phone:hover {
+  color: var(--nav-scroll-text, var(--nav-bar-text, #FFFFFF));
+  opacity: 0.85;
+}
+
+.nav-scroll--branded .nav-scroll__toggle-bar {
+  background-color: var(--nav-scroll-text, var(--nav-bar-text, #FFFFFF));
+}
+
 /* =============================================
    HERO
    ============================================= */
@@ -2361,7 +2400,8 @@ body:has(.nav--transparent) .hero--showcase {
 .card__title {
   font-size: var(--text-h3-desktop);
   margin-top: var(--space-xs);
-  margin-bottom: var(--space-sm);
+  /* v1.7.27 token hook: --card-title-gap, the space under a card title */
+  margin-bottom: var(--card-title-gap, var(--space-sm));
 }
 
 .card__text {
@@ -12410,4 +12450,71 @@ h2 {
     margin-left: calc((100% - var(--quals-row-width)) / 2);
     margin-right: calc((100% - var(--quals-row-width)) / 2);
   }
+}
+
+/* v1.7.27 (10-11-2026): .steps--numerals - the same steps with a large, light
+   numeral (write it as 01, 02, 03) in place of the dark circle, and the step
+   title at full h3 size, all centred. Made for
+   a converted site whose original used big thin sage numbers (allansalmon.com).
+   Token: --step-numeral-color (defaults to the accent colour). Do not combine
+   with .steps--connected: the connector line is drawn for the circle. */
+.steps--numerals .step {
+  padding: 0;
+}
+
+.steps--numerals .step__number {
+  width: auto;
+  height: auto;
+  background: none;
+  border-radius: 0;
+  color: var(--step-numeral-color, var(--color-accent));
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0 0 var(--space-lg);
+}
+
+.steps--numerals .step__title {
+  font-size: var(--text-h3-desktop);
+  margin-bottom: var(--space-md);
+}
+
+/* v1.7.27 (10-11-2026): .nav--sticky - the full header stays at the top of the
+   screen while the page scrolls (allansalmon.com's original did this). Anchor
+   links land below it. Use instead of .nav-scroll, not with it. */
+.nav--sticky {
+  position: sticky;
+  top: 0;
+}
+
+html:has(.nav--sticky) {
+  scroll-padding-top: var(--nav-height, 72px);
+}
+
+/* v1.7.27 (11-11-2026): people keep their heads, framed as portraits. Rick,
+   after Yuzi's tall portrait on counsellingwithyuzi.com sat in a wide box,
+   cropped from the middle (head cut), then from the top (head and shoulders
+   only): "ensure no site cuts off anyones head" and "make the picture more
+   portrait". The background-photo intro box now has the same 3:4 portrait
+   shape as .intro__image, and every person photo shown with cover is cropped
+   mostly from the bottom (20% from the top), never from the middle. A site
+   can move one photo with an inline --photo-focus: center 10%. */
+.intro__image-wrap {
+  aspect-ratio: 3 / 4;
+  min-height: 0;
+}
+
+.intro__image-wrap,
+.about-hero__image-wrap,
+.about-split-third__image-wrap {
+  background-position: var(--photo-focus, center 20%);
+}
+
+.intro__image,
+.about-hero__image,
+.team-member__image,
+.team-list-item__avatar,
+.testimonial__avatar {
+  object-position: var(--photo-focus, center 20%);
 }
